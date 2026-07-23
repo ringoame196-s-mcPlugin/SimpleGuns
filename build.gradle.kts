@@ -41,17 +41,15 @@ configure<BukkitPluginDescription> {
     apiVersion = "1." + mcVersion.split(".")[1]
     author = "ringoame196_s_mcPlugin"
     website = "https://github.com/ringoame196-s-mcPlugin/SimpleGuns"
-    /*
-    コマンド追加用
+
     commands {
-        register("test") {
-            description = "This is a test command!"
-            aliases = listOf("t")
-            permission = "testplugin.test"
-            usage = "Just run the command!"
+        register("simpleguns") {
+            description = "SimpleGuns用コマンド"
+            aliases = listOf("simg")
+            permission = "op"
+            usage = "/simpleguns <give> <gun>"
         }
     }
-    */
 
     /*
     パーミッション追加用

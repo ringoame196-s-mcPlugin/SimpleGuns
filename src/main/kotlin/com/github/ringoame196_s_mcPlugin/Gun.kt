@@ -6,5 +6,5 @@ import org.bukkit.inventory.ItemStack
 interface Gun {
     val id: String
     val gun: ItemStack
-    val recipe: CraftingRecipe
+    val recipe: CraftingRecipe // 定型レシピ、無定形レシピ どちらも使えるように銃にレシピを持たせておく
 }

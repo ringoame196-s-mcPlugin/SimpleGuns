@@ -11,10 +11,17 @@ class Main : JavaPlugin() {
         super.onEnable()
         GunManager.plugin = plugin
         val messageManager = MessageManager(plugin)
-        val gunList = listOf<Gun>(SimpleGun("シンプルガン"))
+        val gunList = listOf<Gun>(SimpleGun("シンプルガン", plugin))
+        RecipeManager.registerRecipes(gunList)
 
         server.pluginManager.registerEvents(Events(), plugin)
         val command = getCommand("simpleguns")
         command!!.setExecutor(Command(gunList, messageManager))
+    }
+
+    override fun onDisable() {
+        super.onDisable()
+        val gunList = listOf<Gun>(SimpleGun("シンプルガン", plugin))
+        RecipeManager.unregisterGunRecipes(gunList)
     }
 }

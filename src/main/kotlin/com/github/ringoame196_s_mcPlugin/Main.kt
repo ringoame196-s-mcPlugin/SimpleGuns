@@ -9,6 +9,7 @@ class Main : JavaPlugin() {
     private val plugin = this
     override fun onEnable() {
         super.onEnable()
+        GunManager.plugin = plugin
         val messageManager = MessageManager(plugin)
         val gunList = listOf<Gun>(SimpleGun("シンプルガン"))
 

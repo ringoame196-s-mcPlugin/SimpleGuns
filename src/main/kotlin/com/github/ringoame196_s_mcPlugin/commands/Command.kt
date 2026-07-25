@@ -1,6 +1,6 @@
 package com.github.ringoame196_s_mcPlugin.commands
 
-import com.github.ringoame196_s_mcPlugin.Gun
+import com.github.ringoame196_s_mcPlugin.GunItem
 import com.github.ringoame196_s_mcPlugin.message.MessageKey
 import com.github.ringoame196_s_mcPlugin.message.MessageManager
 import org.bukkit.Bukkit
@@ -10,8 +10,8 @@ import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 
-class Command(gunList: List<Gun>, private val messageManager: MessageManager) : CommandExecutor, TabCompleter {
-    private val gunMap: Map<String, Gun> = gunList.associateBy { it.id }
+class Command(gunList: List<GunItem>, private val messageManager: MessageManager) : CommandExecutor, TabCompleter {
+    private val gunItemMap: Map<String, GunItem> = gunList.associateBy { it.id }
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (args.isEmpty()) return false
@@ -28,9 +28,9 @@ class Command(gunList: List<Gun>, private val messageManager: MessageManager) : 
 
         if (args.size < indexGunID + 1) return false
         val gunId = args[indexGunID]
-        val gun = gunMap[gunId]?.gun
+        val item = gunItemMap[gunId]?.item
 
-        if (gun == null) {
+        if (item == null) {
             val msg = messageManager.get(MessageKey.GUN_NOT_FOUND, "%gun%" to gunId)
             sender.sendMessage(msg)
             return true
@@ -49,7 +49,7 @@ class Command(gunList: List<Gun>, private val messageManager: MessageManager) : 
         }
 
         for (player in targets) {
-            player.inventory.addItem(gun)
+            player.inventory.addItem(item)
         }
 
         return true
@@ -59,7 +59,7 @@ class Command(gunList: List<Gun>, private val messageManager: MessageManager) : 
         return when (args.size) {
             1 -> mutableListOf(CommandConst.GIVE_COMMAND)
             2 -> when (args[0]) {
-                CommandConst.GIVE_COMMAND -> gunMap.keys.toMutableList()
+                CommandConst.GIVE_COMMAND -> gunItemMap.keys.toMutableList()
                 else -> mutableListOf()
             }
             else -> mutableListOf()

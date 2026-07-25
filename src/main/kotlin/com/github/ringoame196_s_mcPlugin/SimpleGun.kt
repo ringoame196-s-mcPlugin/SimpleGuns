@@ -11,17 +11,19 @@ class SimpleGun(name: String, plugin: Plugin) : GunItem, Gun, LeftClickable, Rig
     override val id = "simple_gun"
     override val item = GunManager.makeGun(Material.IRON_HOE, id, name)
     override val recipe: CraftingRecipe by lazy { createRecipe(plugin) }
+    override val firingRangeDistance = 8.0
+    override val damage = 2.0
 
     override fun onLeftClick(player: Player) {
-        shot(player)
-    }
-
-    override fun onRightClick(player: Player) {
         reload()
     }
 
+    override fun onRightClick(player: Player) {
+        shot(player)
+    }
+
     override fun shot(player: Player) {
-        val entity = GunManager.shot(player)
+        GunManager.shot(player, this)
     }
 
     override fun reload() {

@@ -18,6 +18,7 @@ class GunEvents(gunItemList: List<GunItem>) : Listener {
         val gunItem = e.item ?: return
         val gunId = GunManager.getGunId(gunItem) ?: return
         val gun = gunItemMap[gunId] ?: return
+        e.isCancelled = true
 
         when (e.action) {
             Action.RIGHT_CLICK_AIR, Action.RIGHT_CLICK_BLOCK -> {

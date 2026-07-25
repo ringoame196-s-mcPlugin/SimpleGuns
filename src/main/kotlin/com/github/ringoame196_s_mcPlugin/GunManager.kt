@@ -36,16 +36,15 @@ object GunManager {
         return meta.persistentDataContainer.get(nameKey, PersistentDataType.STRING)
     }
 
-    fun shot(player: Player): LivingEntity? {
-        val firingRangeDistance = 5.0
+    fun shot(player: Player, gun: Gun) {
         val sound = Sound.ENTITY_FIREWORK_ROCKET_BLAST
         player.world.playSound(player.location, sound, 1f, 1f)
 
         val eyeLocation = player.eyeLocation
         val direction = eyeLocation.direction
 
-        val blockHit = player.world.rayTraceBlocks(eyeLocation, direction, firingRangeDistance)
-        val maxDistance = blockHit?.hitPosition?.distance(eyeLocation.toVector()) ?: firingRangeDistance
+        val blockHit = player.world.rayTraceBlocks(eyeLocation, direction, gun.firingRangeDistance)
+        val maxDistance = blockHit?.hitPosition?.distance(eyeLocation.toVector()) ?: gun.firingRangeDistance
 
         val step = 0.5 // パーティクルの間隔
         val steps = (maxDistance / step).toInt()
@@ -64,8 +63,15 @@ object GunManager {
             eyeLocation,
             direction,
             maxDistance
-        ) { entity -> entity != player && entity is LivingEntity } ?: return null
-        return result.hitEntity as LivingEntity
+        ) { entity -> entity != player && entity is LivingEntity } ?: return
+        val targetEntity = result.hitEntity as LivingEntity
+        targetEntity.damage(gun.damage, player)
+        hitDirection(player)
+    }
+
+    fun hitDirection(player: Player) {
+        val sound = Sound.ENTITY_ARROW_HIT_PLAYER
+        player.playSound(player, sound, 1f, 1f)
     }
 
     fun reload() {

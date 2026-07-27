@@ -58,12 +58,13 @@ object GunManager {
         return meta.persistentDataContainer.get(ammonKey, PersistentDataType.INTEGER)
     }
 
-    fun displayAmmon(meta: ItemMeta, maxAmmon: Int, player: Player? = null) {
+    fun displayAmmon(meta: ItemMeta, maxAmmon: Int) {
         val ammon = getGunAmmon(meta) ?: 0
         meta.lore = listOf("$ammon/$maxAmmon")
     }
 
-    fun shot(player: Player, gun: Gun, gunItem: ItemStack) {
+    fun shot(player: Player, gun: Gun) {
+        val gunItem = player.inventory.itemInMainHand
         val meta = gunItem.itemMeta ?: return
         val currentAmmon = getGunAmmon(meta) ?: 0
 
@@ -112,7 +113,7 @@ object GunManager {
 
         // 弾薬減算とメタの更新
         removeGunAmmon(meta, 1)
-        displayAmmon(meta, gun.maxAmmon, player)
+        displayAmmon(meta, gun.maxAmmon)
         gunItem.itemMeta = meta
 
         player.inventory.setItemInMainHand(gunItem)
@@ -123,6 +124,21 @@ object GunManager {
         player.playSound(player.location, sound, 1f, 1f)
     }
 
-    fun reload() {
+    fun reload(player: Player, gun: Gun): Boolean {
+        val gunItem = player.inventory.itemInMainHand
+        val ammonItem = player.inventory.itemInOffHand
+
+        if (getGunId(ammonItem.itemMeta) != gun.ammon.id) return false
+
+        ammonItem.amount -= 1
+        player.inventory.setItemInOffHand(ammonItem)
+
+        val meta = gunItem.itemMeta
+        setAmmon(meta, gun.maxAmmon)
+        displayAmmon(meta, gun.maxAmmon)
+        gunItem.itemMeta = meta
+
+        player.inventory.setItemInMainHand(gunItem)
+        return true
     }
 }

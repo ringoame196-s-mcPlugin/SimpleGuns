@@ -13,9 +13,9 @@ import org.bukkit.plugin.java.JavaPlugin
 object GunManager {
     lateinit var plugin: JavaPlugin
     private const val GUN_ID = "gun_id"
-    private const val GUN_AMMON = "gun_ammon"
+    private const val GUN_AMMO = "gun_ammo"
     private val nameKey by lazy { NamespacedKey(plugin, GUN_ID) }
-    private val ammonKey by lazy { NamespacedKey(plugin, GUN_AMMON) }
+    private val ammonKey by lazy { NamespacedKey(plugin, GUN_AMMO) }
 
     fun makeGun(gun: GunItem): ItemStack {
         val gunItem = ItemStack(gun.material)
@@ -30,8 +30,8 @@ object GunManager {
     fun makeGun(gun: GunItem, maxAmmon: Int): ItemStack {
         val gunItem = makeGun(gun)
         val meta = gunItem.itemMeta ?: return gunItem
-        setAmmon(meta, maxAmmon)
-        displayAmmon(meta, maxAmmon)
+        setAmmo(meta, maxAmmon)
+        displayAmmo(meta, maxAmmon)
         gunItem.itemMeta = meta
         return gunItem
     }
@@ -44,29 +44,29 @@ object GunManager {
         return meta.persistentDataContainer.get(nameKey, PersistentDataType.STRING)
     }
 
-    fun setAmmon(meta: ItemMeta, ammon: Int) {
-        meta.persistentDataContainer.set(ammonKey, PersistentDataType.INTEGER, ammon)
+    fun setAmmo(meta: ItemMeta, ammo: Int) {
+        meta.persistentDataContainer.set(ammonKey, PersistentDataType.INTEGER, ammo)
     }
 
-    fun removeGunAmmon(meta: ItemMeta, value: Int) {
-        val ammon = getGunAmmon(meta) ?: return
+    fun removeGunAmmo(meta: ItemMeta, value: Int) {
+        val ammo = getGunAmmo(meta) ?: return
         // 0 未満にならないようにガード
-        setAmmon(meta, (ammon - value).coerceAtLeast(0))
+        setAmmo(meta, (ammo - value).coerceAtLeast(0))
     }
 
-    fun getGunAmmon(meta: ItemMeta): Int? {
+    fun getGunAmmo(meta: ItemMeta): Int? {
         return meta.persistentDataContainer.get(ammonKey, PersistentDataType.INTEGER)
     }
 
-    fun displayAmmon(meta: ItemMeta, maxAmmon: Int) {
-        val ammon = getGunAmmon(meta) ?: 0
+    fun displayAmmo(meta: ItemMeta, maxAmmon: Int) {
+        val ammon = getGunAmmo(meta) ?: 0
         meta.lore = listOf("$ammon/$maxAmmon")
     }
 
     fun shot(player: Player, gun: Gun) {
         val gunItem = player.inventory.itemInMainHand
         val meta = gunItem.itemMeta ?: return
-        val currentAmmon = getGunAmmon(meta) ?: 0
+        val currentAmmon = getGunAmmo(meta) ?: 0
 
         // 弾切れ判定
         if (currentAmmon <= 0) {
@@ -112,8 +112,8 @@ object GunManager {
         }
 
         // 弾薬減算とメタの更新
-        removeGunAmmon(meta, 1)
-        displayAmmon(meta, gun.maxAmmon)
+        removeGunAmmo(meta, 1)
+        displayAmmo(meta, gun.maxAmmo)
         gunItem.itemMeta = meta
 
         player.inventory.setItemInMainHand(gunItem)
@@ -128,14 +128,14 @@ object GunManager {
         val gunItem = player.inventory.itemInMainHand
         val ammonItem = player.inventory.itemInOffHand
 
-        if (getGunId(ammonItem.itemMeta) != gun.ammon.id) return false
+        if (getGunId(ammonItem.itemMeta) != gun.ammo.id) return false
 
         ammonItem.amount -= 1
         player.inventory.setItemInOffHand(ammonItem)
 
         val meta = gunItem.itemMeta
-        setAmmon(meta, gun.maxAmmon)
-        displayAmmon(meta, gun.maxAmmon)
+        setAmmo(meta, gun.maxAmmo)
+        displayAmmo(meta, gun.maxAmmo)
         gunItem.itemMeta = meta
 
         player.inventory.setItemInMainHand(gunItem)

@@ -5,8 +5,8 @@ import org.bukkit.entity.Player
 interface Gun {
     val firingRangeDistance: Double
     val damage: Double
-    val maxAmmon: Int
-    val ammon: GunItem
+    val maxAmmo: Int
+    val ammo: GunItem
 
     fun shot(player: Player)
     fun reload(player: Player)

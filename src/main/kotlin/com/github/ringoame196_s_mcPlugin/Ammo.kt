@@ -8,7 +8,9 @@ import org.bukkit.plugin.Plugin
 
 class Ammo(name: String, plugin: Plugin) : GunItem {
     override val id = "ammon"
-    override val item = GunManager.makeGun(Material.IRON_NUGGET, id, name)
+    override val displayName = name
+    override val material = Material.IRON_NUGGET
+    override val item = GunManager.makeGun(this)
     override val recipe: CraftingRecipe by lazy { createRecipe(plugin) }
 
     private fun createRecipe(plugin: Plugin): CraftingRecipe {

@@ -8,6 +8,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerInteractEvent
+import org.bukkit.inventory.EquipmentSlot
 
 class GunEvents(gunItemList: List<GunItem>) : Listener {
     private val gunItemMap: Map<String, GunItem> = gunItemList.associateBy { it.id }
@@ -16,19 +17,20 @@ class GunEvents(gunItemList: List<GunItem>) : Listener {
     fun onPlayerInteract(e: PlayerInteractEvent) {
         val player = e.player
         val gunItem = e.item ?: return
-        val gunId = GunManager.getGunId(gunItem) ?: return
+        val gunId = GunManager.getGunId(gunItem.itemMeta) ?: return
         val gun = gunItemMap[gunId] ?: return
         e.isCancelled = true
+        if (e.hand != EquipmentSlot.HAND) return
 
         when (e.action) {
             Action.RIGHT_CLICK_AIR, Action.RIGHT_CLICK_BLOCK -> {
                 if (gun is RightClickable) {
-                    gun.onRightClick(player)
+                    gun.onRightClick(player, gunItem)
                 }
             }
             Action.LEFT_CLICK_AIR, Action.LEFT_CLICK_BLOCK -> {
                 if (gun is LeftClickable) {
-                    gun.onLeftClick(player)
+                    gun.onLeftClick(player, gunItem)
                 }
             }
             else -> {}

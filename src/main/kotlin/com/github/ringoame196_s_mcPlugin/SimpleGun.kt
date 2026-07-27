@@ -8,14 +8,16 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.ShapelessRecipe
 import org.bukkit.plugin.Plugin
 
-class SimpleGun(override val displayName: String, plugin: Plugin, override val ammon: GunItem) : GunItem, Gun, LeftClickable, RightClickable {
+class SimpleGun(override val displayName: String, plugin: Plugin, override val ammo: GunItem) : GunItem, Gun, LeftClickable, RightClickable {
     override val id = "simple_gun"
     override val material = Material.IRON_HOE
-    override val maxAmmon = 15
-    override val item = GunManager.makeGun(this, maxAmmon)
-    override val recipe: CraftingRecipe by lazy { createRecipe(plugin) }
+    override val maxAmmo = 15
     override val firingRangeDistance = 8.0
     override val damage = 2.0
+
+    // lazy で遅延初期化
+    override val item: ItemStack by lazy { GunManager.makeGun(this, maxAmmo) }
+    override val recipe: CraftingRecipe by lazy { createRecipe(plugin) }
 
     override fun onLeftClick(player: Player, gunItem: ItemStack) {
         reload(player)

@@ -17,7 +17,7 @@ class GunEvents(gunItemList: List<GunItem>) : Listener {
     fun onPlayerInteract(e: PlayerInteractEvent) {
         val player = e.player
         val gunItem = e.item ?: return
-        val gunId = GunManager.getGunId(gunItem.itemMeta) ?: return
+        val gunId = GunManager.getGunItemId(gunItem.itemMeta) ?: return
         val gun = gunItemMap[gunId] ?: return
         e.isCancelled = true
         if (e.hand != EquipmentSlot.HAND) return

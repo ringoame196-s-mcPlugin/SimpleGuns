@@ -13,9 +13,9 @@ class Main : JavaPlugin() {
         val messageManager = MessageManager(plugin)
 
         val ammon = Ammo("弾", plugin)
-        val simpleGun = SimpleGun("シンプルガン", plugin, ammon)
+        val pistol = Pistol("シンプルガン", plugin, ammon)
 
-        val gunItemList = listOf(simpleGun, ammon)
+        val gunItemList = listOf(pistol, ammon)
         RecipeManager.registerRecipes(gunItemList)
 
         server.pluginManager.registerEvents(GunEvents(gunItemList), plugin)

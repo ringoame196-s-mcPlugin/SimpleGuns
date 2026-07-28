@@ -8,8 +8,8 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.ShapelessRecipe
 import org.bukkit.plugin.Plugin
 
-class SimpleGun(override val displayName: String, plugin: Plugin, override val ammo: GunItem) : GunItem, Gun, LeftClickable, RightClickable {
-    override val id = "simple_gun"
+class Pistol(override val displayName: String, plugin: Plugin, override val ammo: GunItem) : GunItem, Gun, LeftClickable, RightClickable {
+    override val id = "pistol"
     override val material = Material.IRON_HOE
     override val maxAmmo = 15
     override val firingRangeDistance = 8.0

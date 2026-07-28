@@ -5,7 +5,7 @@ import org.bukkit.Bukkit
 object RecipeManager {
     fun registerRecipes(gunItemList: List<GunItem>) {
         for (gunItem in gunItemList) {
-            val recipe = gunItem.recipe
+            val recipe = gunItem.recipe ?: continue
 
             if (Bukkit.getRecipe(recipe.key) != null) {
                 Bukkit.removeRecipe(recipe.key)

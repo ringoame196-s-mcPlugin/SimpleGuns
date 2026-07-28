@@ -10,5 +10,5 @@ interface GunItem {
     val displayName: String
     val material: Material
 
-    val recipe: CraftingRecipe // 定型レシピ、無定形レシピ どちらも使えるようにレシピを持たせておく
+    val recipe: CraftingRecipe? // 定型レシピ、無定形レシピ どちらも使えるようにレシピを持たせておく
 }

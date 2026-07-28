@@ -12,23 +12,23 @@ import org.bukkit.plugin.java.JavaPlugin
 
 object GunManager {
     lateinit var plugin: JavaPlugin
-    private const val GUN_ID = "gun_id"
+    private const val GUN_ID = "gun_item_id"
     private const val GUN_AMMO = "gun_ammo"
     private val nameKey by lazy { NamespacedKey(plugin, GUN_ID) }
     private val ammonKey by lazy { NamespacedKey(plugin, GUN_AMMO) }
 
-    fun makeGun(gun: GunItem): ItemStack {
+    fun makeGunItem(gun: GunItem): ItemStack {
         val gunItem = ItemStack(gun.material)
         val meta = gunItem.itemMeta ?: return gunItem
         meta.setDisplayName(gun.displayName)
 
-        setGunId(meta, gun.id)
+        setGunItemId(meta, gun.id)
         gunItem.itemMeta = meta
         return gunItem
     }
 
-    fun makeGun(gun: GunItem, maxAmmon: Int): ItemStack {
-        val gunItem = makeGun(gun)
+    fun makeGunItem(gun: GunItem, maxAmmon: Int): ItemStack {
+        val gunItem = makeGunItem(gun)
         val meta = gunItem.itemMeta ?: return gunItem
         setAmmo(meta, maxAmmon)
         displayAmmo(meta, maxAmmon)
@@ -36,11 +36,11 @@ object GunManager {
         return gunItem
     }
 
-    private fun setGunId(meta: ItemMeta, gunId: String) {
+    private fun setGunItemId(meta: ItemMeta, gunId: String) {
         meta.persistentDataContainer.set(nameKey, PersistentDataType.STRING, gunId)
     }
 
-    fun getGunId(meta: ItemMeta): String? {
+    fun getGunItemId(meta: ItemMeta): String? {
         return meta.persistentDataContainer.get(nameKey, PersistentDataType.STRING)
     }
 
@@ -124,11 +124,13 @@ object GunManager {
         player.playSound(player.location, sound, 1f, 1f)
     }
 
-    fun reload(player: Player, gun: Gun): Boolean {
+    fun reload(player: Player, gun: Gun) {
         val gunItem = player.inventory.itemInMainHand
         val ammonItem = player.inventory.itemInOffHand
 
-        if (getGunId(ammonItem.itemMeta) != gun.ammo.id) return false
+        if (!gun.ammoList.map { it.id }.contains(getGunItemId(ammonItem.itemMeta))) {
+            return
+        }
 
         ammonItem.amount -= 1
         player.inventory.setItemInOffHand(ammonItem)
@@ -139,6 +141,5 @@ object GunManager {
         gunItem.itemMeta = meta
 
         player.inventory.setItemInMainHand(gunItem)
-        return true
     }
 }

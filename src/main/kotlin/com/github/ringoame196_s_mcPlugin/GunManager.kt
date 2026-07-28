@@ -141,5 +141,8 @@ object GunManager {
         gunItem.itemMeta = meta
 
         player.inventory.setItemInMainHand(gunItem)
+
+        val sound = Sound.ITEM_ARMOR_EQUIP_IRON
+        player.world.playSound(player.location, sound, 1f, 1f)
     }
 }

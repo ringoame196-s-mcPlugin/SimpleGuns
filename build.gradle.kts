@@ -47,7 +47,7 @@ configure<BukkitPluginDescription> {
             description = "SimpleGuns用コマンド"
             aliases = listOf("simg")
             permission = "op"
-            usage = "/simpleguns <give> <gun>"
+            usage = "/simpleguns <give> <item_id> [<count>] [<target>]"
         }
     }
 

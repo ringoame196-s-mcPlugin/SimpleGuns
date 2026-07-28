@@ -24,16 +24,22 @@ class Command(gunList: List<GunItem>, private val messageManager: MessageManager
 
     private fun give(sender: CommandSender, args: Array<out String>): Boolean {
         val indexGunID = 1
-        val indexTarget = 2
+        val indexAmount = 2
+        val indexTarget = 3
 
         if (args.size < indexGunID + 1) return false
         val gunId = args[indexGunID]
-        val item = gunItemMap[gunId]?.item
+        val baseItem = gunItemMap[gunId]?.item
 
-        if (item == null) {
+        if (baseItem == null) {
             val msg = messageManager.get(MessageKey.GUN_NOT_FOUND, "%gun%" to gunId)
             sender.sendMessage(msg)
             return true
+        }
+        val item = baseItem.clone()
+
+        if (args.size > indexAmount) {
+            item.amount = args[indexAmount].toInt()
         }
 
         val targets = mutableListOf<Player>()
@@ -60,6 +66,14 @@ class Command(gunList: List<GunItem>, private val messageManager: MessageManager
             1 -> mutableListOf(CommandConst.GIVE_COMMAND)
             2 -> when (args[0]) {
                 CommandConst.GIVE_COMMAND -> gunItemMap.keys.toMutableList()
+                else -> mutableListOf()
+            }
+            3 -> when (args[0]) {
+                CommandConst.GIVE_COMMAND -> mutableListOf("[<count>]")
+                else -> mutableListOf()
+            }
+            4 -> when (args[0]) {
+                CommandConst.GIVE_COMMAND -> (Bukkit.getOnlinePlayers().map { it.name } + "@a" + "@p" + "@r" + "@s").toMutableList()
                 else -> mutableListOf()
             }
             else -> mutableListOf()

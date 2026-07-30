@@ -1,1 +1,2 @@
 gun_not_found : "§cGun '%gun%' not found."
+give_message : "§aGave '%amount%' x '%gun%' §ato '%size%' player."

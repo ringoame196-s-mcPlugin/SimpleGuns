@@ -32,15 +32,17 @@ class Command(gunList: List<GunItem>, private val messageManager: MessageManager
         val baseItem = gunItemMap[gunId]?.item
 
         if (baseItem == null) {
-            val msg = messageManager.get(MessageKey.GUN_NOT_FOUND, "%gun%" to gunId)
-            sender.sendMessage(msg)
+            val noFoundMsg = messageManager.get(MessageKey.GUN_NOT_FOUND, "%gun%" to gunId)
+            sender.sendMessage(noFoundMsg)
             return true
         }
         val item = baseItem.clone()
-
-        if (args.size > indexAmount) {
-            item.amount = args[indexAmount].toInt()
+        val amount: Int = if (args.size > indexAmount) {
+            args[indexAmount].toInt()
+        } else {
+            1
         }
+        item.amount = amount
 
         val targets = mutableListOf<Player>()
         if (args.size > indexTarget) {
@@ -57,6 +59,14 @@ class Command(gunList: List<GunItem>, private val messageManager: MessageManager
         for (player in targets) {
             player.inventory.addItem(item)
         }
+
+        val pairs = arrayOf(
+            "'%gun%'" to gunId,
+            "'%amount%'" to amount.toString(),
+            "'%size%'" to targets.size.toString()
+        )
+        val giveMsg = messageManager.get(MessageKey.GIVE_MESSAGE, *pairs)
+        sender.sendMessage(giveMsg)
 
         return true
     }

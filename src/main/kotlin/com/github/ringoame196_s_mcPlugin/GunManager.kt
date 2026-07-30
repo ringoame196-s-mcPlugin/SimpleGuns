@@ -136,24 +136,26 @@ object GunManager {
 
     fun reload(player: Player, gun: Gun) {
         val gunItem = player.inventory.itemInMainHand
-        val ammonItem = player.inventory.itemInOffHand
+        val ammoItem = player.inventory.itemInOffHand
 
-        if (!gun.ammoList.map { it.id }.contains(getGunItemId(ammonItem.itemMeta))) {
-            return
+        val ammoMeta = ammoItem.itemMeta ?: return
+        val ammoId = getGunItemId(ammoMeta) ?: return
+
+        val reloadAmmo = gun.ammoList.firstOrNull { it.id == ammoId } ?: return
+
+        val ammoCost = reloadAmmo.ammoCost
+        if (ammoItem.amount < ammoCost) return
+
+        val gunMeta = gunItem.itemMeta ?: return
+
+        if (ammoCost > 0) {
+            ammoItem.amount -= ammoCost
         }
 
-        ammonItem.amount -= 1
-        player.inventory.setItemInOffHand(ammonItem)
+        setAmmo(gunMeta, gun.maxAmmo)
+        displayAmmo(gunMeta, gun.maxAmmo)
+        gunItem.itemMeta = gunMeta
 
-        val meta = gunItem.itemMeta
-        setAmmo(meta, gun.maxAmmo)
-        displayAmmo(meta, gun.maxAmmo)
-        gunItem.itemMeta = meta
-
-        player.inventory.setItemInMainHand(gunItem)
-
-        val sound = Sound.ITEM_ARMOR_EQUIP_IRON
-        player.world.playSound(player.location, sound, 1f, 1f)
         player.world.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_IRON, 1f, 1f)
         displayAmmo(player, gun.maxAmmo)
     }

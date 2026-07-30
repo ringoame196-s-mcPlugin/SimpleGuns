@@ -1,5 +1,8 @@
 package com.github.ringoame196_s_mcPlugin
 
+import net.md_5.bungee.api.ChatMessageType
+import net.md_5.bungee.api.chat.TextComponent
+import org.bukkit.ChatColor
 import org.bukkit.NamespacedKey
 import org.bukkit.Particle
 import org.bukkit.Sound
@@ -50,7 +53,6 @@ object GunManager {
 
     fun removeGunAmmo(meta: ItemMeta, value: Int) {
         val ammo = getGunAmmo(meta) ?: return
-        // 0 未満にならないようにガード
         setAmmo(meta, (ammo - value).coerceAtLeast(0))
     }
 
@@ -117,6 +119,14 @@ object GunManager {
         gunItem.itemMeta = meta
 
         player.inventory.setItemInMainHand(gunItem)
+
+        val updatedAmmo = getGunAmmo(meta) ?: 0
+        displayAmmo(player, updatedAmmo)
+    }
+
+    private fun displayAmmo(player: Player, currentAmmon: Int) {
+        val message = "${ChatColor.GOLD}Ammo: $currentAmmon"
+        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, *TextComponent.fromLegacyText(message))
     }
 
     fun hitDirection(player: Player) {
@@ -144,5 +154,7 @@ object GunManager {
 
         val sound = Sound.ITEM_ARMOR_EQUIP_IRON
         player.world.playSound(player.location, sound, 1f, 1f)
+        player.world.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_IRON, 1f, 1f)
+        displayAmmo(player, gun.maxAmmo)
     }
 }

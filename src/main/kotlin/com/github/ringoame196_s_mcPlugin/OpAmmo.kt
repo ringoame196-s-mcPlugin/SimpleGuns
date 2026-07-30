@@ -11,6 +11,7 @@ class OpAmmo(name: String) : Ammo {
     override val material = Material.IRON_NUGGET
     override val item: ItemStack by lazy { createItem() }
     override val recipe = null
+    override val ammoCost: Int = 0
 
     private fun createItem(): ItemStack {
         val item = GunManager.makeGunItem(this)

@@ -15,9 +15,6 @@ object SlotGunManager {
         return item
     }
 
-    fun getGunSlots() {
-    }
-
     fun next(hasSlotGun: HasSlotGun, gunItem: ItemStack, player: Player) {
         val meta = gunItem.itemMeta
         var selectSlot = meta.gun.selectSlot + 1

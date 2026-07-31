@@ -3,29 +3,22 @@ package com.github.ringoame196_s_mcPlugin
 import net.md_5.bungee.api.ChatMessageType
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.ChatColor
-import org.bukkit.NamespacedKey
 import org.bukkit.Particle
 import org.bukkit.Sound
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
-import org.bukkit.persistence.PersistentDataType
 import org.bukkit.plugin.java.JavaPlugin
 
 object GunManager {
     lateinit var plugin: JavaPlugin
-    private const val GUN_ID = "gun_item_id"
-    private const val GUN_AMMO = "gun_ammo"
-    private val nameKey by lazy { NamespacedKey(plugin, GUN_ID) }
-    private val ammonKey by lazy { NamespacedKey(plugin, GUN_AMMO) }
 
     fun makeGunItem(gun: GunItem): ItemStack {
         val gunItem = ItemStack(gun.material)
         val meta = gunItem.itemMeta ?: return gunItem
         meta.setDisplayName(gun.displayName)
-
-        setGunItemId(meta, gun.id)
+        meta.gun.id = gun.id
         gunItem.itemMeta = meta
         return gunItem
     }
@@ -33,42 +26,21 @@ object GunManager {
     fun makeGunItem(gun: GunItem, maxAmmon: Int): ItemStack {
         val gunItem = makeGunItem(gun)
         val meta = gunItem.itemMeta ?: return gunItem
-        setAmmo(meta, maxAmmon)
+        meta.gun.ammo = maxAmmon
         displayAmmo(meta, maxAmmon)
         gunItem.itemMeta = meta
         return gunItem
     }
 
-    private fun setGunItemId(meta: ItemMeta, gunId: String) {
-        meta.persistentDataContainer.set(nameKey, PersistentDataType.STRING, gunId)
-    }
-
-    fun getGunItemId(meta: ItemMeta): String? {
-        return meta.persistentDataContainer.get(nameKey, PersistentDataType.STRING)
-    }
-
-    fun setAmmo(meta: ItemMeta, ammo: Int) {
-        meta.persistentDataContainer.set(ammonKey, PersistentDataType.INTEGER, ammo)
-    }
-
-    fun removeGunAmmo(meta: ItemMeta, value: Int) {
-        val ammo = getGunAmmo(meta) ?: return
-        setAmmo(meta, (ammo - value).coerceAtLeast(0))
-    }
-
-    fun getGunAmmo(meta: ItemMeta): Int? {
-        return meta.persistentDataContainer.get(ammonKey, PersistentDataType.INTEGER)
-    }
-
     fun displayAmmo(meta: ItemMeta, maxAmmon: Int) {
-        val ammon = getGunAmmo(meta) ?: 0
+        val ammon = meta.gun.ammo
         meta.lore = listOf("$ammon/$maxAmmon")
     }
 
     fun shot(player: Player, gun: Gun) {
         val gunItem = player.inventory.itemInMainHand
         val meta = gunItem.itemMeta ?: return
-        val currentAmmon = getGunAmmo(meta) ?: 0
+        val currentAmmon = meta.gun.ammo
 
         // 弾切れ判定
         if (currentAmmon <= 0) {
@@ -114,13 +86,13 @@ object GunManager {
         }
 
         // 弾薬減算とメタの更新
-        removeGunAmmo(meta, 1)
+        meta.gun.reduceAmmo(1)
         displayAmmo(meta, gun.maxAmmo)
         gunItem.itemMeta = meta
 
         player.inventory.setItemInMainHand(gunItem)
 
-        val updatedAmmo = getGunAmmo(meta) ?: 0
+        val updatedAmmo = meta.gun.ammo
         displayAmmo(player, updatedAmmo)
     }
 
@@ -139,7 +111,7 @@ object GunManager {
         val ammoItem = player.inventory.itemInOffHand
 
         val ammoMeta = ammoItem.itemMeta ?: return
-        val ammoId = getGunItemId(ammoMeta) ?: return
+        val ammoId = ammoMeta.gun.id
 
         val reloadAmmo = gun.ammoList.firstOrNull { it.id == ammoId } ?: return
 
@@ -152,7 +124,7 @@ object GunManager {
             ammoItem.amount -= ammoCost
         }
 
-        setAmmo(gunMeta, gun.maxAmmo)
+        gunMeta.gun.ammo = gun.maxAmmo
         displayAmmo(gunMeta, gun.maxAmmo)
         gunItem.itemMeta = gunMeta
 

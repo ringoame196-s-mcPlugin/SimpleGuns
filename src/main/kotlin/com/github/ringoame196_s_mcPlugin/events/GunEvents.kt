@@ -1,9 +1,9 @@
 package com.github.ringoame196_s_mcPlugin.events
 
 import com.github.ringoame196_s_mcPlugin.GunItem
-import com.github.ringoame196_s_mcPlugin.GunManager
 import com.github.ringoame196_s_mcPlugin.LeftClickable
 import com.github.ringoame196_s_mcPlugin.RightClickable
+import com.github.ringoame196_s_mcPlugin.gun
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
@@ -17,7 +17,7 @@ class GunEvents(gunItemList: List<GunItem>) : Listener {
     fun onPlayerInteract(e: PlayerInteractEvent) {
         val player = e.player
         val gunItem = e.item ?: return
-        val gunId = GunManager.getGunItemId(gunItem.itemMeta) ?: return
+        val gunId = gunItem.itemMeta.gun.id
         val gun = gunItemMap[gunId] ?: return
         e.isCancelled = true
         if (e.hand != EquipmentSlot.HAND) return

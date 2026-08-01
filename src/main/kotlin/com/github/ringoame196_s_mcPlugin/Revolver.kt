@@ -21,11 +21,7 @@ class Revolver(override val displayName: String, plugin: Plugin, override val am
     override val recipe: CraftingRecipe by lazy { createRecipe(plugin) }
 
     override fun onLeftClick(player: Player, gunItem: ItemStack) {
-        if (player.isSneaking) {
-            reload(player)
-        } else {
-            next(player, gunItem)
-        }
+        shot(player)
     }
 
     private fun next(player: Player, gunItem: ItemStack) {
@@ -33,18 +29,19 @@ class Revolver(override val displayName: String, plugin: Plugin, override val am
     }
 
     override fun onRightClick(player: Player, gunItem: ItemStack) {
-        shot(player)
+        if (player.isSneaking) {
+            reload(player)
+        } else {
+            next(player, gunItem)
+        }
     }
 
     override fun shot(player: Player) {
-        val gunItem = player.inventory.itemInMainHand
-        val selectSlot = gunItem.itemMeta.gun.selectSlot
-
-        SlotGunManager.shot(player, this, selectSlot)
+        SlotGunManager.shotRevolver(player, this)
     }
 
     override fun reload(player: Player) {
-        GunManager.reload(player, this)
+        SlotGunManager.reloadSingle(player, this)
     }
 
     private fun createRecipe(plugin: Plugin): CraftingRecipe {

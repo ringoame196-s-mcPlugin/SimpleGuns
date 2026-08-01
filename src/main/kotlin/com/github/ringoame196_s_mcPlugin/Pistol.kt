@@ -20,11 +20,11 @@ class Pistol(override val displayName: String, plugin: Plugin, override val ammo
     override val recipe: CraftingRecipe by lazy { createRecipe(plugin) }
 
     override fun onLeftClick(player: Player, gunItem: ItemStack) {
-        reload(player)
+        shot(player)
     }
 
     override fun onRightClick(player: Player, gunItem: ItemStack) {
-        shot(player)
+        reload(player)
     }
 
     override fun shot(player: Player) {
@@ -32,7 +32,11 @@ class Pistol(override val displayName: String, plugin: Plugin, override val ammo
     }
 
     override fun reload(player: Player) {
-        GunManager.reload(player, this)
+        if (player.isSneaking) {
+            GunManager.reloadAll(player, this)
+        } else {
+            GunManager.reloadSingle(player, this)
+        }
     }
 
     private fun createRecipe(plugin: Plugin): CraftingRecipe {

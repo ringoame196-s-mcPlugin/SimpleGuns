@@ -37,14 +37,11 @@ class Revolver(override val displayName: String, plugin: Plugin, override val am
     }
 
     override fun shot(player: Player) {
-        val gunItem = player.inventory.itemInMainHand
-        val selectSlot = gunItem.itemMeta.gun.selectSlot
-
-        SlotGunManager.shot(player, this, selectSlot)
+        SlotGunManager.shotRevolver(player, this)
     }
 
     override fun reload(player: Player) {
-        GunManager.reload(player, this)
+        SlotGunManager.reloadSingle(player, this)
     }
 
     private fun createRecipe(plugin: Plugin): CraftingRecipe {

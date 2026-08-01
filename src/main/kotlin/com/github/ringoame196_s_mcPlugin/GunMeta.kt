@@ -7,7 +7,6 @@ import org.bukkit.persistence.PersistentDataType
 /**
  * ItemMeta を包んで銃の操作をカプセル化するラッパークラス
  */
-
 class GunMeta(val rawMeta: ItemMeta) {
     private enum class GunKey(val keyName: String) {
         GUN_ID("gun_item_id"),
@@ -37,11 +36,19 @@ class GunMeta(val rawMeta: ItemMeta) {
             rawMeta.persistentDataContainer.set(GunKey.GUN_AMMO.key, PersistentDataType.INTEGER, safeValue)
         }
 
+    // 選択中のスロット（配列のインデックス合わせで 0 始まりを推奨）
     var selectSlot: Int
-        get() = rawMeta.persistentDataContainer.get(GunKey.SELECT_SLOT.key, PersistentDataType.INTEGER) ?: 1
+        get() = rawMeta.persistentDataContainer.get(GunKey.SELECT_SLOT.key, PersistentDataType.INTEGER) ?: 0
         set(value) {
-            val safeValue = value.coerceAtLeast(1)
+            val safeValue = value.coerceAtLeast(0)
             rawMeta.persistentDataContainer.set(GunKey.SELECT_SLOT.key, PersistentDataType.INTEGER, safeValue)
+        }
+
+    // シリンダー内の弾薬スロット（デフォルト6連発の場合）
+    var slots: IntArray
+        get() = rawMeta.persistentDataContainer.get(GunKey.GUN_SLOTS.key, PersistentDataType.INTEGER_ARRAY) ?: IntArray(6) { 0 }
+        set(value) {
+            rawMeta.persistentDataContainer.set(GunKey.GUN_SLOTS.key, PersistentDataType.INTEGER_ARRAY, value)
         }
 
     // Loreの弾数表示を更新する便利メソッド

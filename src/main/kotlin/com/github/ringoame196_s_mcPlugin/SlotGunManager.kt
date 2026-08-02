@@ -2,15 +2,14 @@ package com.github.ringoame196_s_mcPlugin
 
 import net.md_5.bungee.api.ChatMessageType
 import net.md_5.bungee.api.chat.TextComponent
-import org.bukkit.Particle
 import org.bukkit.Sound
-import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
 object SlotGunManager : GunManager() {
+
     override fun displayAmmo(player: Player, gunItem: ItemStack) {
-        val meta = gunItem.itemMeta
+        val meta = gunItem.itemMeta ?: return
         val currentSlot = meta.gun.currentSlot
         val slots = meta.gun.slots
 
@@ -21,7 +20,7 @@ object SlotGunManager : GunManager() {
             val icon = if (hasAmmo) "●" else "○"
 
             if (i == currentSlot) {
-                builder.append("§e[$icon]§r ") // 選択中のスロットを強調（黄色）
+                builder.append("§e[$icon]§r ") // 選択中（黄色）
             } else {
                 builder.append("§7$icon§r ") // それ以外（グレー）
             }
@@ -31,7 +30,9 @@ object SlotGunManager : GunManager() {
         player.spigot().sendMessage(ChatMessageType.ACTION_BAR, *TextComponent.fromLegacyText(message))
     }
 
-    // 手動でシリンダーを回す処理（キー操作や右クリック等）
+    /**
+     * 手動でシリンダーを回す処理
+     */
     fun next(hasSlotGun: HasSlotGun, gunItem: ItemStack, player: Player) {
         val meta = gunItem.itemMeta ?: return
         val gunMeta = meta.gun
@@ -40,16 +41,51 @@ object SlotGunManager : GunManager() {
         gunMeta.currentSlot = nextSlot
         gunItem.itemMeta = gunMeta.rawMeta
 
-        // カチャッとシリンダーを回す音
         player.world.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_CHAIN, 1f, 1.5f)
-
-        // アクションバーにシリンダー状態を表示
         displayAmmo(player, gunItem)
         player.inventory.setItemInMainHand(gunItem)
     }
 
-    // 発射処理
-    public override fun shot(player: Player, gun: Gun) {
+    /**
+     * 弾薬チェック & 発砲時のスロット消費・空撃ち回転処理
+     */
+    override fun consumeAmmoOrDryFire(player: Player, gunItem: ItemStack, gunMeta: GunMeta): Boolean {
+        val cylinderSlots = gunMeta.slots
+        val currentSlot = gunMeta.currentSlot
+
+        if (currentSlot !in cylinderSlots.indices) return false
+
+        val ammoId = cylinderSlots[currentSlot]
+
+        // 【空撃ち時】
+        if (ammoId == 0) {
+            handleNoAmmo(player) // カチッと音を鳴らし、シリンダーを1つ進める
+            return false // 射撃不可（レイキャストを行わない）
+        }
+
+        // 【実弾発砲時】
+        // 1. スロットを空にする
+        cylinderSlots[currentSlot] = 0
+        gunMeta.slots = cylinderSlots
+
+        // 2. 次のスロットへ進める
+        val nextSlot = (currentSlot + 1) % cylinderSlots.size
+        gunMeta.currentSlot = nextSlot
+
+        // 3. 総残弾数も減らす
+        gunMeta.reduceAmmo(1)
+
+        // 4. メタデータをアイテムに書き戻す
+        gunItem.itemMeta = gunMeta.rawMeta
+        player.inventory.setItemInMainHand(gunItem)
+
+        return true // 射撃許可
+    }
+
+    /**
+     * 空撃ち（Dry Fire）時の挙動
+     */
+    override fun handleNoAmmo(player: Player) {
         val gunItem = player.inventory.itemInMainHand
         val meta = gunItem.itemMeta ?: return
         val gunMeta = meta.gun
@@ -57,68 +93,30 @@ object SlotGunManager : GunManager() {
         val cylinderSlots = gunMeta.slots
         val currentSlot = gunMeta.currentSlot
 
-        if (currentSlot !in cylinderSlots.indices) return
+        // 空撃ち音
+        player.playSound(player.location, Sound.BLOCK_DISPENSER_FAIL, 1f, 1.8f)
 
-        val ammoId = cylinderSlots[currentSlot]
-
-        // 空撃ち判定 (カチッ)
-        if (ammoId == 0) {
-            player.playSound(player.location, Sound.BLOCK_DISPENSER_FAIL, 1f, 1.8f)
-
-            // シリンダーを1つ進める
-            val nextSlot = (currentSlot + 1) % cylinderSlots.size
-            gunMeta.currentSlot = nextSlot
-            gunItem.itemMeta = gunMeta.rawMeta
-            player.inventory.setItemInMainHand(gunItem)
-
-            // 表示更新
-            displayAmmo(player, gunItem)
-            return
-        }
-
-        // --- 射撃演出・レイキャスト処理（省略なし）---
-        val sound = Sound.ENTITY_FIREWORK_ROCKET_BLAST
-        player.world.playSound(player.location, sound, 1f, 1f)
-
-        val eyeLocation = player.eyeLocation
-        val direction = eyeLocation.direction
-        val blockHit = player.world.rayTraceBlocks(eyeLocation, direction, gun.firingRangeDistance)
-        val maxDistance = blockHit?.hitPosition?.distance(eyeLocation.toVector()) ?: gun.firingRangeDistance
-
-        val step = 0.5
-        val steps = (maxDistance / step).toInt()
-        for (i in 1..steps) {
-            val point = eyeLocation.clone().add(direction.clone().multiply(i * step))
-            player.world.spawnParticle(Particle.CRIT, point, 1, 0.0, 0.0, 0.0, 0.0)
-        }
-
-        val result = player.world.rayTraceEntities(eyeLocation, direction, maxDistance) { entity ->
-            entity != player && entity is LivingEntity
-        }
-        if (result != null) {
-            val targetEntity = result.hitEntity as LivingEntity
-            targetEntity.damage(gun.damage, player)
-            hitDirection(player)
-        }
-
-        // 撃ったスロットを空にする & 次のスロットへ
-        cylinderSlots[currentSlot] = 0
-        gunMeta.slots = cylinderSlots
-
-        val nextSlot = (currentSlot + 1) % cylinderSlots.size
-        gunMeta.currentSlot = nextSlot
-
-        // 総残弾数の減少（必要に応じて）
-        gunMeta.reduceAmmo(1)
-
-        gunItem.itemMeta = gunMeta.rawMeta
-        player.inventory.setItemInMainHand(gunItem)
-
-        // 画面にシリンダー表示
+        // アクションバー表示更新
         displayAmmo(player, gunItem)
     }
 
-    // 1発ずつリロードする処理
+    override fun removeAmmo(gunItem: ItemStack, player: Player) {
+        // consumeAmmoOrDryFire 側でスロット・ammo共に減算・書き込み済みのため空実装でOK
+    }
+
+    /**
+     * 発射エントリーポイント
+     */
+    public override fun shot(player: Player, gun: Gun) {
+        val gunItem = player.inventory.itemInMainHand
+
+        // 親クラス（GunManager）のテンプレート処理を呼び出すだけ！
+        shot(player, gunItem, gun)
+    }
+
+    /**
+     * 1発ずつリロードする処理
+     */
     fun reloadSingle(player: Player, gun: HasSlotGun) {
         val gunItem = player.inventory.itemInMainHand
         val ammoItem = player.inventory.itemInOffHand
@@ -134,11 +132,9 @@ object SlotGunManager : GunManager() {
 
         // 空いている最初のスロットを探す (0 の場所)
         val emptyIndex = cylinderSlots.indexOfFirst { it == 0 }
+        if (emptyIndex == -1) return // 満タンならリロードしない
 
-        // 満タンならリロードしない
-        if (emptyIndex == -1) return
-
-        // 弾薬を消費してスロットに装填 (1 = 通常弾、必要なら ammoId に応じた数値)
+        // 弾薬を消費してスロットに装テン
         if (reloadAmmo.ammoCost > 0) {
             ammoItem.amount -= reloadAmmo.ammoCost
         }
@@ -148,10 +144,7 @@ object SlotGunManager : GunManager() {
         gunItem.itemMeta = gunMeta.rawMeta
         player.inventory.setItemInMainHand(gunItem)
 
-        // 装填音 (チャキンッ)
         player.world.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_IRON, 1f, 1.4f)
-
-        // シリンダー表示
         displayAmmo(player, gunItem)
     }
 }

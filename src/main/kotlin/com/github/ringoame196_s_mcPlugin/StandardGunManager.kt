@@ -3,9 +3,7 @@ package com.github.ringoame196_s_mcPlugin
 import net.md_5.bungee.api.ChatMessageType
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.ChatColor
-import org.bukkit.Particle
 import org.bukkit.Sound
-import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
@@ -39,60 +37,32 @@ object StandardGunManager : GunManager() {
         }
     }
 
-    public override fun shot(player: Player, gun: Gun) {
+    override fun consumeAmmoOrDryFire(player: Player, gunItem: ItemStack, gunMeta: GunMeta): Boolean {
         val gunItem = player.inventory.itemInMainHand
-        val meta = gunItem.itemMeta ?: return
+        val meta = gunItem.itemMeta ?: return false
         val currentAmmo = meta.gun.ammo
+        return currentAmmo > 0
+    }
 
-        if (currentAmmo <= 0) {
-            player.playSound(player.location, Sound.BLOCK_DISPENSER_FAIL, 1f, 1.5f)
-            player.spigot().sendMessage(
-                ChatMessageType.ACTION_BAR,
-                *TextComponent.fromLegacyText("§c§lNO AMMO! RELOAD!")
-            )
-            return
-        }
+    override fun handleNoAmmo(player: Player) {
+        player.playSound(player.location, Sound.BLOCK_DISPENSER_FAIL, 1f, 1.5f)
+        player.spigot().sendMessage(
+            ChatMessageType.ACTION_BAR,
+            *TextComponent.fromLegacyText("§c§lNO AMMO! RELOAD!")
+        )
+    }
 
-        val sound = Sound.ENTITY_FIREWORK_ROCKET_BLAST
-        player.world.playSound(player.location, sound, 1f, 1f)
-
-        val eyeLocation = player.eyeLocation
-        val direction = eyeLocation.direction
-
-        val blockHit = player.world.rayTraceBlocks(eyeLocation, direction, gun.firingRangeDistance)
-        val maxDistance = blockHit?.hitPosition?.distance(eyeLocation.toVector()) ?: gun.firingRangeDistance
-
-        val step = 0.5
-        val steps = (maxDistance / step).toInt()
-
-        for (i in 1..steps) {
-            val point = eyeLocation.clone().add(direction.clone().multiply(i * step))
-            player.world.spawnParticle(
-                Particle.CRIT,
-                point,
-                1,
-                0.0, 0.0, 0.0, 0.0
-            )
-        }
-
-        val result = player.world.rayTraceEntities(
-            eyeLocation,
-            direction,
-            maxDistance
-        ) { entity -> entity != player && entity is LivingEntity }
-
-        if (result != null) {
-            val targetEntity = result.hitEntity as LivingEntity
-            targetEntity.damage(gun.damage, player)
-            hitDirection(player)
-        }
-
+    override fun removeAmmo(gunItem: ItemStack, player: Player) {
+        val meta = gunItem.itemMeta
         meta.gun.reduceAmmo(1)
         gunItem.itemMeta = meta
 
         player.inventory.setItemInMainHand(gunItem)
+    }
 
-        displayAmmo(player, gunItem)
+    public override fun shot(player: Player, gun: Gun) {
+        val gunItem = player.inventory.itemInMainHand
+        shot(player, gunItem, gun)
     }
 
     /**

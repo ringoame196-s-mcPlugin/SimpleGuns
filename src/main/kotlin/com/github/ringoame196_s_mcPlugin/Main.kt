@@ -6,10 +6,16 @@ import com.github.ringoame196_s_mcPlugin.message.MessageManager
 import org.bukkit.plugin.java.JavaPlugin
 
 class Main : JavaPlugin() {
-    private val plugin = this
+    companion object {
+        // 外部クラスから Main.plugin でアクセスできるようにする
+        lateinit var plugin: Main
+            private set
+    }
+
     override fun onEnable() {
         super.onEnable()
-        GunManager.plugin = plugin
+        plugin = this
+
         val messageManager = MessageManager(plugin)
 
         val ironAmmo = IronAmmo("鉄弾", plugin)

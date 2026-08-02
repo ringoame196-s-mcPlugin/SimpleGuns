@@ -8,7 +8,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.ShapelessRecipe
 import org.bukkit.plugin.Plugin
 
-class Pistol(override val displayName: String, plugin: Plugin, override val ammoList: List<Ammo>) : Gun, LeftClickable, RightClickable {
+class Pistol(override val displayName: String, plugin: Plugin, override val ammoList: List<Ammo>) : StandardGun, LeftClickable, RightClickable {
     override val id = "pistol"
     override val material = Material.IRON_HOE
     override val maxAmmo = 15
@@ -16,7 +16,7 @@ class Pistol(override val displayName: String, plugin: Plugin, override val ammo
     override val damage = 2.0
 
     // lazy で遅延初期化
-    override val item: ItemStack by lazy { GunManager.makeGunItem(this, maxAmmo) }
+    override val item: ItemStack by lazy { GunItemManager.makeGunItem(this) }
     override val recipe: CraftingRecipe by lazy { createRecipe(plugin) }
 
     override fun onLeftClick(player: Player, gunItem: ItemStack) {
@@ -28,14 +28,14 @@ class Pistol(override val displayName: String, plugin: Plugin, override val ammo
     }
 
     override fun shot(player: Player) {
-        GunManager.shot(player, this)
+        StandardGunManager.shot(player, this)
     }
 
     override fun reload(player: Player) {
         if (player.isSneaking) {
-            GunManager.reloadAll(player, this)
+            StandardGunManager.reloadAll(player, this)
         } else {
-            GunManager.reloadSingle(player, this)
+            StandardGunManager.reloadSingle(player, this)
         }
     }
 

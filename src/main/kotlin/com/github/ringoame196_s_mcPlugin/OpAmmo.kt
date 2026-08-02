@@ -14,7 +14,7 @@ class OpAmmo(name: String) : Ammo {
     override val ammoCost: Int = 0
 
     private fun createItem(): ItemStack {
-        val item = GunManager.makeGunItem(this)
+        val item = GunItemManager.makeGunItem(this)
         item.addUnsafeEnchantment(Enchantment.VANISHING_CURSE, 1)
         return item
     }

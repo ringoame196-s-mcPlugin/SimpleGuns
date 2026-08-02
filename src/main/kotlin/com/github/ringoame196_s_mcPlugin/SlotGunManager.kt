@@ -11,7 +11,7 @@ import org.bukkit.inventory.ItemStack
 object SlotGunManager {
 
     fun makeGunItem(gun: GunItem): ItemStack {
-        val item = GunManager.makeGunItem(gun)
+        val item = GunItemManager.makeGunItem(gun)
         val meta = item.itemMeta ?: return item
         meta.gun.selectSlot = 0
         // 初期状態は空のシリンダー

@@ -14,17 +14,8 @@ import org.bukkit.plugin.java.JavaPlugin
 object GunManager {
     lateinit var plugin: JavaPlugin
 
-    fun makeGunItem(gun: GunItem): ItemStack {
-        val gunItem = ItemStack(gun.material)
-        val meta = gunItem.itemMeta ?: return gunItem
-        meta.setDisplayName(gun.displayName)
-        meta.gun.id = gun.id
-        gunItem.itemMeta = meta
-        return gunItem
-    }
-
     fun makeGunItem(gun: GunItem, maxAmmo: Int): ItemStack {
-        val gunItem = makeGunItem(gun)
+        val gunItem = GunItemManager.makeGunItem(gun)
         val meta = gunItem.itemMeta ?: return gunItem
         meta.gun.ammo = maxAmmo
         displayAmmo(meta, maxAmmo)

@@ -12,9 +12,10 @@ class GunMeta(val rawMeta: ItemMeta) {
         GUN_ID("gun_item_id"),
         GUN_AMMO("gun_ammo"),
         SELECT_SLOT("select_gun_slot"),
-        GUN_SLOTS("gun_slots");
+        GUN_SLOTS("gun_slots"),
+        GUN_MAX_AMMO("gun_max_ammo");
 
-        val key: NamespacedKey get() = NamespacedKey(GunManager.plugin, keyName)
+        val key: NamespacedKey get() = NamespacedKey(Main.plugin, keyName)
     }
 
     // 銃のID
@@ -37,7 +38,7 @@ class GunMeta(val rawMeta: ItemMeta) {
         }
 
     // 選択中のスロット（配列のインデックス合わせで 0 始まりを推奨）
-    var selectSlot: Int
+    var currentSlot: Int
         get() = rawMeta.persistentDataContainer.get(GunKey.SELECT_SLOT.key, PersistentDataType.INTEGER) ?: 0
         set(value) {
             val safeValue = value.coerceAtLeast(0)
@@ -49,6 +50,12 @@ class GunMeta(val rawMeta: ItemMeta) {
         get() = rawMeta.persistentDataContainer.get(GunKey.GUN_SLOTS.key, PersistentDataType.INTEGER_ARRAY) ?: IntArray(6) { 0 }
         set(value) {
             rawMeta.persistentDataContainer.set(GunKey.GUN_SLOTS.key, PersistentDataType.INTEGER_ARRAY, value)
+        }
+
+    var maxAmmo: Int
+        get() = rawMeta.persistentDataContainer.get(GunKey.GUN_MAX_AMMO.key, PersistentDataType.INTEGER) ?: 0
+        set(value) {
+            rawMeta.persistentDataContainer.set(GunKey.GUN_MAX_AMMO.key, PersistentDataType.INTEGER, value)
         }
 
     // Loreの弾数表示を更新する便利メソッド

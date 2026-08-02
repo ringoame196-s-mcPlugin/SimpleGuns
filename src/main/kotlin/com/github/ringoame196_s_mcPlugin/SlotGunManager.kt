@@ -8,16 +8,27 @@ import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
-object SlotGunManager {
+object SlotGunManager : GunManager() {
+    override fun displayAmmo(player: Player, gunItem: ItemStack) {
+        val meta = gunItem.itemMeta
+        val currentSlot = meta.gun.currentSlot
+        val slots = meta.gun.slots
 
-    fun makeGunItem(gun: GunItem): ItemStack {
-        val item = GunItemManager.makeGunItem(gun)
-        val meta = item.itemMeta ?: return item
-        meta.gun.selectSlot = 0
-        // 初期状態は空のシリンダー
-        meta.gun.slots = IntArray((gun as? HasSlotGun)?.slot ?: 6) { 0 }
-        item.itemMeta = meta
-        return item
+        val builder = StringBuilder()
+
+        for (i in slots.indices) {
+            val hasAmmo = slots[i] != 0
+            val icon = if (hasAmmo) "●" else "○"
+
+            if (i == currentSlot) {
+                builder.append("§e[$icon]§r ") // 選択中のスロットを強調（黄色）
+            } else {
+                builder.append("§7$icon§r ") // それ以外（グレー）
+            }
+        }
+
+        val message = builder.toString().trimEnd()
+        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, *TextComponent.fromLegacyText(message))
     }
 
     // 手動でシリンダーを回す処理（キー操作や右クリック等）
@@ -25,26 +36,26 @@ object SlotGunManager {
         val meta = gunItem.itemMeta ?: return
         val gunMeta = meta.gun
 
-        val nextSlot = (gunMeta.selectSlot + 1) % hasSlotGun.slot
-        gunMeta.selectSlot = nextSlot
+        val nextSlot = (gunMeta.currentSlot + 1) % hasSlotGun.slot
+        gunMeta.currentSlot = nextSlot
         gunItem.itemMeta = gunMeta.rawMeta
 
         // カチャッとシリンダーを回す音
         player.world.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_CHAIN, 1f, 1.5f)
 
         // アクションバーにシリンダー状態を表示
-        displayCylinderStatus(player, gunMeta.slots, nextSlot)
+        displayAmmo(player, gunItem)
         player.inventory.setItemInMainHand(gunItem)
     }
 
     // 発射処理
-    fun shotRevolver(player: Player, gun: Gun) {
+    public override fun shot(player: Player, gun: Gun) {
         val gunItem = player.inventory.itemInMainHand
         val meta = gunItem.itemMeta ?: return
         val gunMeta = meta.gun
 
         val cylinderSlots = gunMeta.slots
-        val currentSlot = gunMeta.selectSlot
+        val currentSlot = gunMeta.currentSlot
 
         if (currentSlot !in cylinderSlots.indices) return
 
@@ -56,12 +67,12 @@ object SlotGunManager {
 
             // シリンダーを1つ進める
             val nextSlot = (currentSlot + 1) % cylinderSlots.size
-            gunMeta.selectSlot = nextSlot
+            gunMeta.currentSlot = nextSlot
             gunItem.itemMeta = gunMeta.rawMeta
             player.inventory.setItemInMainHand(gunItem)
 
             // 表示更新
-            displayCylinderStatus(player, cylinderSlots, nextSlot)
+            displayAmmo(player, gunItem)
             return
         }
 
@@ -87,7 +98,7 @@ object SlotGunManager {
         if (result != null) {
             val targetEntity = result.hitEntity as LivingEntity
             targetEntity.damage(gun.damage, player)
-            GunManager.hitDirection(player)
+            hitDirection(player)
         }
 
         // 撃ったスロットを空にする & 次のスロットへ
@@ -95,7 +106,7 @@ object SlotGunManager {
         gunMeta.slots = cylinderSlots
 
         val nextSlot = (currentSlot + 1) % cylinderSlots.size
-        gunMeta.selectSlot = nextSlot
+        gunMeta.currentSlot = nextSlot
 
         // 総残弾数の減少（必要に応じて）
         gunMeta.reduceAmmo(1)
@@ -104,7 +115,7 @@ object SlotGunManager {
         player.inventory.setItemInMainHand(gunItem)
 
         // 画面にシリンダー表示
-        displayCylinderStatus(player, cylinderSlots, nextSlot)
+        displayAmmo(player, gunItem)
     }
 
     // 1発ずつリロードする処理
@@ -141,24 +152,6 @@ object SlotGunManager {
         player.world.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_IRON, 1f, 1.4f)
 
         // シリンダー表示
-        displayCylinderStatus(player, cylinderSlots, gunMeta.selectSlot)
-    }
-
-    fun displayCylinderStatus(player: Player, slots: IntArray, currentSlot: Int) {
-        val builder = StringBuilder()
-
-        for (i in slots.indices) {
-            val hasAmmo = slots[i] != 0
-            val icon = if (hasAmmo) "●" else "○"
-
-            if (i == currentSlot) {
-                builder.append("§e[$icon]§r ") // 選択中のスロットを強調（黄色）
-            } else {
-                builder.append("§7$icon§r ") // それ以外（グレー）
-            }
-        }
-
-        val message = builder.toString().trimEnd()
-        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, *TextComponent.fromLegacyText(message))
+        displayAmmo(player, gunItem)
     }
 }

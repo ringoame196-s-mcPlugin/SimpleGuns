@@ -10,7 +10,7 @@ class IronAmmo(name: String, plugin: Plugin) : Ammo {
     override val id = "iron_ammo"
     override val displayName = name
     override val material = Material.IRON_NUGGET
-    override val item = GunManager.makeGunItem(this)
+    override val item = GunItemManager.makeGunItem(this)
     override val recipe: CraftingRecipe by lazy { createRecipe(plugin) }
 
     private fun createRecipe(plugin: Plugin): CraftingRecipe {

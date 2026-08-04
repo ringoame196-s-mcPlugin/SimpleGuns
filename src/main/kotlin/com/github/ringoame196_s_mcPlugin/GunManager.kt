@@ -8,7 +8,7 @@ import org.bukkit.inventory.ItemStack
 
 abstract class GunManager {
 
-    protected abstract fun displayAmmo(player: Player, gunItem: ItemStack)
+    abstract fun displayAmmo(player: Player, gunItem: ItemStack)
     protected abstract fun shot(player: Player, gun: Gun)
 
     protected abstract fun consumeAmmoOrDryFire(

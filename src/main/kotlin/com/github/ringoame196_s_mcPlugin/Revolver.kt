@@ -8,7 +8,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.ShapelessRecipe
 import org.bukkit.plugin.Plugin
 
-class Revolver(override val displayName: String, plugin: Plugin, override val ammoList: List<Ammo>) : LeftClickable, RightClickable, HasSlotGun {
+class Revolver(override val displayName: String, plugin: Plugin, override val ammoList: List<Ammo>) : LeftClickable, RightClickable, SlotGun {
     override val id = "revolver"
     override val material = Material.IRON_AXE
     override val slot = 5
@@ -24,7 +24,7 @@ class Revolver(override val displayName: String, plugin: Plugin, override val am
     }
 
     private fun next(player: Player, gunItem: ItemStack) {
-        SlotGunManager.next(this, gunItem, player)
+        gunManager.next(this, gunItem, player)
     }
 
     override fun onRightClick(player: Player, gunItem: ItemStack) {
@@ -36,11 +36,11 @@ class Revolver(override val displayName: String, plugin: Plugin, override val am
     }
 
     override fun shot(player: Player) {
-        SlotGunManager.shot(player, this)
+        gunManager.shot(player, this)
     }
 
     override fun reload(player: Player) {
-        SlotGunManager.reloadSingle(player, this)
+        gunManager.reloadSingle(player, this)
     }
 
     private fun createRecipe(plugin: Plugin): CraftingRecipe {

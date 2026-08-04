@@ -28,14 +28,14 @@ class Pistol(override val displayName: String, plugin: Plugin, override val ammo
     }
 
     override fun shot(player: Player) {
-        StandardGunManager.shot(player, this)
+        gunManager.shot(player, this)
     }
 
     override fun reload(player: Player) {
         if (player.isSneaking) {
-            StandardGunManager.reloadAll(player, this)
+            gunManager.reloadAll(player, this)
         } else {
-            StandardGunManager.reloadSingle(player, this)
+            gunManager.reloadSingle(player, this)
         }
     }
 

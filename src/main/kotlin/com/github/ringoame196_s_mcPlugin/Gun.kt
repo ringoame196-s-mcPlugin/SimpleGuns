@@ -6,6 +6,7 @@ interface Gun : GunItem {
     val firingRangeDistance: Double
     val damage: Double
     val ammoList: List<Ammo>
+    val gunManager: GunManager
 
     fun shot(player: Player)
     fun reload(player: Player)

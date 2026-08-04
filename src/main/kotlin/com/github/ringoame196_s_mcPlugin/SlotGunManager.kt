@@ -33,11 +33,11 @@ object SlotGunManager : GunManager() {
     /**
      * 手動でシリンダーを回す処理
      */
-    fun next(hasSlotGun: HasSlotGun, gunItem: ItemStack, player: Player) {
+    fun next(slotGun: SlotGun, gunItem: ItemStack, player: Player) {
         val meta = gunItem.itemMeta ?: return
         val gunMeta = meta.gun
 
-        val nextSlot = (gunMeta.currentSlot + 1) % hasSlotGun.slot
+        val nextSlot = (gunMeta.currentSlot + 1) % slotGun.slot
         gunMeta.currentSlot = nextSlot
         gunItem.itemMeta = gunMeta.rawMeta
 
@@ -117,7 +117,7 @@ object SlotGunManager : GunManager() {
     /**
      * 1発ずつリロードする処理
      */
-    fun reloadSingle(player: Player, gun: HasSlotGun) {
+    fun reloadSingle(player: Player, gun: SlotGun) {
         val gunItem = player.inventory.itemInMainHand
         val ammoItem = player.inventory.itemInOffHand
 

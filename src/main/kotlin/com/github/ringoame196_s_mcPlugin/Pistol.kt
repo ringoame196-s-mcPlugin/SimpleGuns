@@ -14,28 +14,29 @@ class Pistol(override val displayName: String, plugin: Plugin, override val ammo
     override val maxAmmo = 15
     override val firingRangeDistance = 8.0
     override val damage = 2.0
+    override val gunManager = StandardGunManager
 
     // lazy で遅延初期化
     override val item: ItemStack by lazy { GunItemManager.makeGunItem(this) }
     override val recipe: CraftingRecipe by lazy { createRecipe(plugin) }
 
     override fun onLeftClick(player: Player, gunItem: ItemStack) {
-        shot(player)
-    }
-
-    override fun onRightClick(player: Player, gunItem: ItemStack) {
         reload(player)
     }
 
+    override fun onRightClick(player: Player, gunItem: ItemStack) {
+        shot(player)
+    }
+
     override fun shot(player: Player) {
-        StandardGunManager.shot(player, this)
+        gunManager.shot(player, this)
     }
 
     override fun reload(player: Player) {
         if (player.isSneaking) {
-            StandardGunManager.reloadAll(player, this)
+            gunManager.reloadAll(player, this)
         } else {
-            StandardGunManager.reloadSingle(player, this)
+            gunManager.reloadSingle(player, this)
         }
     }
 

@@ -11,16 +11,21 @@ import org.bukkit.plugin.Plugin
 class Revolver(override val displayName: String, plugin: Plugin, override val ammoList: List<Ammo>) : LeftClickable, RightClickable, SlotGun {
     override val id = "revolver"
     override val material = Material.IRON_AXE
-    override val slot = 5
+    override val slot = 6
     override val firingRangeDistance = 8.0
-    override val damage = 6.0
+    override val damage = 3.0
+    override val gunManager = SlotGunManager
 
     // lazy で遅延初期化
     override val item: ItemStack by lazy { GunItemManager.makeGunItem(this) }
     override val recipe: CraftingRecipe by lazy { createRecipe(plugin) }
 
     override fun onLeftClick(player: Player, gunItem: ItemStack) {
-        shot(player)
+        if (player.isSneaking) {
+            reload(player)
+        } else {
+            next(player, gunItem)
+        }
     }
 
     private fun next(player: Player, gunItem: ItemStack) {
@@ -28,11 +33,7 @@ class Revolver(override val displayName: String, plugin: Plugin, override val am
     }
 
     override fun onRightClick(player: Player, gunItem: ItemStack) {
-        if (player.isSneaking) {
-            reload(player)
-        } else {
-            next(player, gunItem)
-        }
+        shot(player)
     }
 
     override fun shot(player: Player) {

@@ -21,8 +21,7 @@ class GunEvents(gunItemList: List<GunItem>) : Listener {
     fun onPlayerInteract(e: PlayerInteractEvent) {
         val player = e.player
         val gunItem = e.item ?: return
-        val gunId = gunItem.itemMeta.gun.id
-        val gun = gunItemMap[gunId] ?: return
+        val gun = getGun(e.item ?: return)
         if (gun !is Gun) return
         e.isCancelled = true
         if (e.hand != EquipmentSlot.HAND) return
@@ -46,11 +45,10 @@ class GunEvents(gunItemList: List<GunItem>) : Listener {
     fun onPlayerItemHeld(e: PlayerItemHeldEvent) {
         val player = e.player
         val newSlot = e.newSlot
-        val item = player.inventory.getItem(newSlot) ?: return
-        val gunId = item.itemMeta.gun.id
-        val gun = gunItemMap[gunId] ?: return
+        val gunItem = player.inventory.getItem(newSlot) ?: return
+        val gun = getGun(gunItem)
         if (gun is Gun) {
-            gun.gunManager.displayAmmo(player, item)
+            gun.gunManager.displayAmmo(player, gunItem)
         }
     }
 

@@ -12,7 +12,7 @@ object GunItemManager {
 
         when (gun) {
             is StandardGun -> setupStandardGunItem(gun, meta)
-            is HasSlotGun -> setupHasSlotGunItem(gun, meta)
+            is SlotGun -> setupHasSlotGunItem(gun, meta)
         }
         gunItem.itemMeta = meta
 
@@ -25,7 +25,7 @@ object GunItemManager {
         meta.gun.maxAmmo = maxAmmo
     }
 
-    private fun setupHasSlotGunItem(gun: HasSlotGun, meta: ItemMeta) {
+    private fun setupHasSlotGunItem(gun: SlotGun, meta: ItemMeta) {
         meta.gun.currentSlot = 0
 
         // 初期状態は空のシリンダー

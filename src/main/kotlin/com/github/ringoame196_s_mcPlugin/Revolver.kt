@@ -15,6 +15,7 @@ class Revolver(override val displayName: String, plugin: Plugin, override val am
     override val firingRangeDistance = 8.0
     override val damage = 3.0
     override val gunManager = SlotGunManager
+    override val autoReload = true
 
     // lazy で遅延初期化
     override val item: ItemStack by lazy { GunItemManager.makeGunItem(this) }

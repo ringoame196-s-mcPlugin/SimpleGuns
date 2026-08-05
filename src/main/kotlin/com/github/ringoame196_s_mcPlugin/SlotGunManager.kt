@@ -49,7 +49,8 @@ object SlotGunManager : GunManager() {
     /**
      * 弾薬チェック & 発砲時のスロット消費・空撃ち回転処理
      */
-    override fun consumeAmmoOrDryFire(player: Player, gunItem: ItemStack, gunMeta: GunMeta): Boolean {
+    override fun consumeAmmoOrDryFire(player: Player, gunItem: ItemStack, gunMeta: GunMeta, gun: Gun): Boolean {
+        val slotGun = gun as SlotGun
         val cylinderSlots = gunMeta.slots
         val currentSlot = gunMeta.currentSlot
 
@@ -69,8 +70,10 @@ object SlotGunManager : GunManager() {
         gunMeta.slots = cylinderSlots
 
         // 2. 次のスロットへ進める
-        val nextSlot = (currentSlot + 1) % cylinderSlots.size
-        gunMeta.currentSlot = nextSlot
+        if (slotGun.autoReload) {
+            val nextSlot = (currentSlot + 1) % cylinderSlots.size
+            gunMeta.currentSlot = nextSlot
+        }
 
         // 3. 総残弾数も減らす
         gunMeta.reduceAmmo(1)
@@ -89,9 +92,6 @@ object SlotGunManager : GunManager() {
         val gunItem = player.inventory.itemInMainHand
         val meta = gunItem.itemMeta ?: return
         val gunMeta = meta.gun
-
-        val cylinderSlots = gunMeta.slots
-        val currentSlot = gunMeta.currentSlot
 
         // 空撃ち音
         player.playSound(player.location, Sound.BLOCK_DISPENSER_FAIL, 1f, 1.8f)

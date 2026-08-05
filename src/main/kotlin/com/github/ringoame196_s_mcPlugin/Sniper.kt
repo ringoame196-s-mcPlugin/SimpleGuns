@@ -18,6 +18,7 @@ class Sniper(override val displayName: String, plugin: Plugin, override val ammo
     override val firingRangeDistance = 20.0
     override val damage = 8.0
     override val gunManager = SlotGunManager
+    override val autoReload = false
 
     // lazy で遅延初期化
     override val item: ItemStack by lazy { GunItemManager.makeGunItem(this) }

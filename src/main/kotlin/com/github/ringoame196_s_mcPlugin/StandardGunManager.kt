@@ -37,7 +37,7 @@ object StandardGunManager : GunManager() {
         }
     }
 
-    override fun consumeAmmoOrDryFire(player: Player, gunItem: ItemStack, gunMeta: GunMeta): Boolean {
+    override fun consumeAmmoOrDryFire(player: Player, gunItem: ItemStack, gunMeta: GunMeta, gun: Gun): Boolean {
         val gunItem = player.inventory.itemInMainHand
         val meta = gunItem.itemMeta ?: return false
         val currentAmmo = meta.gun.ammo

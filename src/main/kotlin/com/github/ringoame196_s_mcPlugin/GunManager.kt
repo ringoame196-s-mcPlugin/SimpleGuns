@@ -14,7 +14,8 @@ abstract class GunManager {
     protected abstract fun consumeAmmoOrDryFire(
         player: Player,
         gunItem: ItemStack,
-        gunMeta: GunMeta
+        gunMeta: GunMeta,
+        gun: Gun
     ): Boolean
 
     protected abstract fun handleNoAmmo(player: Player)
@@ -24,7 +25,7 @@ abstract class GunManager {
     fun shot(player: Player, gunItem: ItemStack, gun: Gun) {
         // 弾薬のチェック＆消費に失敗した（撃てない）場合は中断
         val gunMeta = gunItem.itemMeta.gun
-        if (!consumeAmmoOrDryFire(player, gunItem, gunMeta)) {
+        if (!consumeAmmoOrDryFire(player, gunItem, gunMeta, gun)) {
             handleNoAmmo(player)
             return
         }

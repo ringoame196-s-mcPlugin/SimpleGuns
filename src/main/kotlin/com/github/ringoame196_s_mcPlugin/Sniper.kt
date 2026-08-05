@@ -8,14 +8,17 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.ShapelessRecipe
 import org.bukkit.plugin.Plugin
 
-class Revolver(override val displayName: String, plugin: Plugin, override val ammoList: List<Ammo>) : LeftClickable, RightClickable, SlotGun {
-    override val id = "revolver"
-    override val material = Material.IRON_AXE
-    override val slot = 6
-    override val firingRangeDistance = 8.0
-    override val damage = 3.0
+class Sniper(override val displayName: String, plugin: Plugin, override val ammoList: List<Ammo>) :
+    LeftClickable,
+    SlotGun,
+    StopUsing {
+    override val id = "sniper"
+    override val material = Material.SPYGLASS
+    override val slot = 5
+    override val firingRangeDistance = 20.0
+    override val damage = 8.0
     override val gunManager = SlotGunManager
-    override val autoReload = true
+    override val autoReload = false
 
     // lazy で遅延初期化
     override val item: ItemStack by lazy { GunItemManager.makeGunItem(this) }
@@ -29,12 +32,10 @@ class Revolver(override val displayName: String, plugin: Plugin, override val am
         }
     }
 
-    private fun next(player: Player, gunItem: ItemStack) {
-        gunManager.next(this, gunItem, player)
-    }
-
-    override fun onRightClick(player: Player, gunItem: ItemStack) {
-        shot(player)
+    override fun onStopUsing(player: Player, gunItem: ItemStack) {
+        if (player.isSneaking) {
+            shot(player)
+        }
     }
 
     override fun shot(player: Player) {
@@ -45,13 +46,16 @@ class Revolver(override val displayName: String, plugin: Plugin, override val am
         gunManager.reloadSingle(player, this)
     }
 
+    private fun next(player: Player, gunItem: ItemStack) {
+        gunManager.next(this, gunItem, player)
+    }
+
     private fun createRecipe(plugin: Plugin): CraftingRecipe {
         val key = NamespacedKey(plugin, "${id}_shapeless")
         return ShapelessRecipe(key, item).apply {
             addIngredient(Material.IRON_INGOT)
             addIngredient(Material.COBBLESTONE)
-            addIngredient(Material.GUNPOWDER)
-            addIngredient(Material.GUNPOWDER)
+            addIngredient(Material.TNT)
         }
     }
 }

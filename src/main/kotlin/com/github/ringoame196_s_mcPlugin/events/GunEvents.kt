@@ -4,7 +4,9 @@ import com.github.ringoame196_s_mcPlugin.Gun
 import com.github.ringoame196_s_mcPlugin.GunItem
 import com.github.ringoame196_s_mcPlugin.LeftClickable
 import com.github.ringoame196_s_mcPlugin.RightClickable
+import com.github.ringoame196_s_mcPlugin.StopUsing
 import com.github.ringoame196_s_mcPlugin.gun
+import io.papermc.paper.event.player.PlayerStopUsingItemEvent
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
@@ -23,21 +25,33 @@ class GunEvents(gunItemList: List<GunItem>) : Listener {
         val gunItem = e.item ?: return
         val gun = getGun(e.item ?: return)
         if (gun !is Gun) return
-        e.isCancelled = true
         if (e.hand != EquipmentSlot.HAND) return
 
         when (e.action) {
             Action.RIGHT_CLICK_AIR, Action.RIGHT_CLICK_BLOCK -> {
                 if (gun is RightClickable) {
                     gun.onRightClick(player, gunItem)
+                    e.isCancelled = true
                 }
             }
             Action.LEFT_CLICK_AIR, Action.LEFT_CLICK_BLOCK -> {
                 if (gun is LeftClickable) {
                     gun.onLeftClick(player, gunItem)
+                    e.isCancelled = true
                 }
             }
             else -> {}
+        }
+    }
+
+    @EventHandler
+    fun onPlayerStopUsingItem(e: PlayerStopUsingItemEvent) {
+        val player = e.player
+        val gunItem = e.item ?: return
+        val gun = getGun(e.item ?: return)
+        if (gun !is Gun) return
+        if (gun is StopUsing) {
+            gun.onStopUsing(player, gunItem)
         }
     }
 

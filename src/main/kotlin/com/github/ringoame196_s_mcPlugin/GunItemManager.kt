@@ -1,5 +1,8 @@
 package com.github.ringoame196_s_mcPlugin
 
+import org.bukkit.attribute.Attribute
+import org.bukkit.attribute.AttributeModifier
+import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 
@@ -9,6 +12,10 @@ object GunItemManager {
         val meta = gunItem.itemMeta ?: return gunItem
         meta.setDisplayName(gun.displayName)
         meta.gun.id = gun.id
+
+        if (gun is Gun) {
+            setZeroDamage(meta)
+        }
 
         when (gun) {
             is StandardGun -> setupStandardGunItem(gun, meta)
@@ -30,5 +37,17 @@ object GunItemManager {
 
         // 初期状態は空のシリンダー
         meta.gun.slots = IntArray((gun).slot) { 0 }
+    }
+
+    private fun setZeroDamage(meta: ItemMeta) {
+        meta.removeAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE)
+
+        val zeroModifier = AttributeModifier(
+            "zero_attack_damage",
+            0.0, // 加算値を 0 に指定
+            AttributeModifier.Operation.ADD_NUMBER
+        )
+        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, zeroModifier)
+        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES)
     }
 }

@@ -23,18 +23,19 @@ class GunEvents(gunItemList: List<GunItem>) : Listener {
         val gunItem = e.item ?: return
         val gun = getGun(e.item ?: return)
         if (gun !is Gun) return
-        e.isCancelled = true
         if (e.hand != EquipmentSlot.HAND) return
 
         when (e.action) {
             Action.RIGHT_CLICK_AIR, Action.RIGHT_CLICK_BLOCK -> {
                 if (gun is RightClickable) {
                     gun.onRightClick(player, gunItem)
+                    e.isCancelled = true
                 }
             }
             Action.LEFT_CLICK_AIR, Action.LEFT_CLICK_BLOCK -> {
                 if (gun is LeftClickable) {
                     gun.onLeftClick(player, gunItem)
+                    e.isCancelled = true
                 }
             }
             else -> {}

@@ -22,10 +22,12 @@ class Main : JavaPlugin() {
         val opAmmo = OpAmmo("OP弾")
         val pistol = Pistol("シンプルガン", plugin, listOf(ironAmmo, opAmmo))
         val revolver = Revolver("リボルガン", plugin, listOf(ironAmmo, opAmmo))
+        val sniper = Sniper("スナイパー", plugin, listOf(ironAmmo, opAmmo))
 
         val gunItemList = listOf(
             pistol,
             revolver,
+            sniper,
             ironAmmo,
             opAmmo
         )

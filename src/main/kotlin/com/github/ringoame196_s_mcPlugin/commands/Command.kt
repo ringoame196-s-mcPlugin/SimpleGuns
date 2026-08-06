@@ -1,8 +1,8 @@
 package com.github.ringoame196_s_mcPlugin.commands
 
-import com.github.ringoame196_s_mcPlugin.models.GunItem
 import com.github.ringoame196_s_mcPlugin.message.MessageKey
 import com.github.ringoame196_s_mcPlugin.message.MessageManager
+import com.github.ringoame196_s_mcPlugin.models.GunItem
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor

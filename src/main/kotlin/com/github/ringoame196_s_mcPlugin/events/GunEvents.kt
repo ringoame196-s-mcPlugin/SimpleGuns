@@ -1,10 +1,10 @@
 package com.github.ringoame196_s_mcPlugin.events
 
-import com.github.ringoame196_s_mcPlugin.models.Gun
-import com.github.ringoame196_s_mcPlugin.models.GunItem
 import com.github.ringoame196_s_mcPlugin.interfaces.LeftClickable
 import com.github.ringoame196_s_mcPlugin.interfaces.RightClickable
 import com.github.ringoame196_s_mcPlugin.interfaces.StopUsing
+import com.github.ringoame196_s_mcPlugin.models.Gun
+import com.github.ringoame196_s_mcPlugin.models.GunItem
 import com.github.ringoame196_s_mcPlugin.utils.gun
 import io.papermc.paper.event.player.PlayerStopUsingItemEvent
 import org.bukkit.event.EventHandler

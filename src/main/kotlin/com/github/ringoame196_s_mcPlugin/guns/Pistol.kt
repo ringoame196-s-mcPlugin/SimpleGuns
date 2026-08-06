@@ -14,8 +14,10 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.ShapelessRecipe
 import org.bukkit.plugin.Plugin
 
-class Pistol(override val displayName: String, plugin: Plugin, override val ammoList: List<Ammo>) : StandardGun,
-    LeftClickable, RightClickable {
+class Pistol(override val displayName: String, plugin: Plugin, override val ammoList: List<Ammo>) :
+    StandardGun,
+    LeftClickable,
+    RightClickable {
     override val id = "pistol"
     override val material = Material.IRON_HOE
     override val maxAmmo = 15

@@ -1,5 +1,10 @@
-package com.github.ringoame196_s_mcPlugin
+package com.github.ringoame196_s_mcPlugin.managers
 
+import com.github.ringoame196_s_mcPlugin.models.Gun
+import com.github.ringoame196_s_mcPlugin.models.GunItem
+import com.github.ringoame196_s_mcPlugin.models.SlotGun
+import com.github.ringoame196_s_mcPlugin.models.StandardGun
+import com.github.ringoame196_s_mcPlugin.utils.gun
 import org.bukkit.attribute.Attribute
 import org.bukkit.attribute.AttributeModifier
 import org.bukkit.inventory.ItemFlag

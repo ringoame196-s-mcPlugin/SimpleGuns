@@ -1,4 +1,4 @@
-package com.github.ringoame196_s_mcPlugin
+package com.github.ringoame196_s_mcPlugin.models
 
 import org.bukkit.Material
 import org.bukkit.inventory.CraftingRecipe

@@ -1,7 +1,13 @@
 package com.github.ringoame196_s_mcPlugin
 
+import com.github.ringoame196_s_mcPlugin.ammos.IronAmmo
+import com.github.ringoame196_s_mcPlugin.ammos.OpAmmo
 import com.github.ringoame196_s_mcPlugin.commands.Command
 import com.github.ringoame196_s_mcPlugin.events.GunEvents
+import com.github.ringoame196_s_mcPlugin.guns.Pistol
+import com.github.ringoame196_s_mcPlugin.guns.Revolver
+import com.github.ringoame196_s_mcPlugin.guns.Sniper
+import com.github.ringoame196_s_mcPlugin.managers.RecipeManager
 import com.github.ringoame196_s_mcPlugin.message.MessageManager
 import org.bukkit.plugin.java.JavaPlugin
 

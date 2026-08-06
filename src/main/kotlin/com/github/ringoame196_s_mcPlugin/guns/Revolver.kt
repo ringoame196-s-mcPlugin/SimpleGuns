@@ -1,5 +1,11 @@
-package com.github.ringoame196_s_mcPlugin
+package com.github.ringoame196_s_mcPlugin.guns
 
+import com.github.ringoame196_s_mcPlugin.interfaces.LeftClickable
+import com.github.ringoame196_s_mcPlugin.interfaces.RightClickable
+import com.github.ringoame196_s_mcPlugin.managers.GunItemManager
+import com.github.ringoame196_s_mcPlugin.managers.SlotGunManager
+import com.github.ringoame196_s_mcPlugin.models.Ammo
+import com.github.ringoame196_s_mcPlugin.models.SlotGun
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.entity.Player
@@ -8,20 +14,30 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.ShapelessRecipe
 import org.bukkit.plugin.Plugin
 
-class Pistol(override val displayName: String, plugin: Plugin, override val ammoList: List<Ammo>) : StandardGun, LeftClickable, RightClickable {
-    override val id = "pistol"
-    override val material = Material.IRON_HOE
-    override val maxAmmo = 15
+class Revolver(override val displayName: String, plugin: Plugin, override val ammoList: List<Ammo>) : LeftClickable,
+    RightClickable, SlotGun {
+    override val id = "revolver"
+    override val material = Material.IRON_AXE
+    override val slot = 6
     override val firingRangeDistance = 8.0
-    override val damage = 2.0
-    override val gunManager = StandardGunManager
+    override val damage = 3.0
+    override val gunManager = SlotGunManager
+    override val autoReload = true
 
     // lazy で遅延初期化
     override val item: ItemStack by lazy { GunItemManager.makeGunItem(this) }
     override val recipe: CraftingRecipe by lazy { createRecipe(plugin) }
 
     override fun onLeftClick(player: Player, gunItem: ItemStack) {
-        reload(player)
+        if (player.isSneaking) {
+            reload(player)
+        } else {
+            next(player, gunItem)
+        }
+    }
+
+    private fun next(player: Player, gunItem: ItemStack) {
+        gunManager.next(this, gunItem, player)
     }
 
     override fun onRightClick(player: Player, gunItem: ItemStack) {
@@ -33,11 +49,7 @@ class Pistol(override val displayName: String, plugin: Plugin, override val ammo
     }
 
     override fun reload(player: Player) {
-        if (player.isSneaking) {
-            gunManager.reloadAll(player, this)
-        } else {
-            gunManager.reloadSingle(player, this)
-        }
+        gunManager.reloadSingle(player, this)
     }
 
     private fun createRecipe(plugin: Plugin): CraftingRecipe {
@@ -45,6 +57,7 @@ class Pistol(override val displayName: String, plugin: Plugin, override val ammo
         return ShapelessRecipe(key, item).apply {
             addIngredient(Material.IRON_INGOT)
             addIngredient(Material.COBBLESTONE)
+            addIngredient(Material.GUNPOWDER)
             addIngredient(Material.GUNPOWDER)
         }
     }

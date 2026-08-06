@@ -1,5 +1,7 @@
-package com.github.ringoame196_s_mcPlugin
+package com.github.ringoame196_s_mcPlugin.ammos
 
+import com.github.ringoame196_s_mcPlugin.managers.GunItemManager
+import com.github.ringoame196_s_mcPlugin.models.Ammo
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.inventory.CraftingRecipe

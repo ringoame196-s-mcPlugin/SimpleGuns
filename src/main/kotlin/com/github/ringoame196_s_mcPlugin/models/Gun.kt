@@ -1,5 +1,6 @@
-package com.github.ringoame196_s_mcPlugin
+package com.github.ringoame196_s_mcPlugin.models
 
+import com.github.ringoame196_s_mcPlugin.managers.GunManager
 import org.bukkit.entity.Player
 
 interface Gun : GunItem {

@@ -70,6 +70,18 @@ object StandardGunManager : GunManager() {
      * 必要なコスト分（全弾補充に必要な弾数）をオフハンドから一度に減らして全回復する
      */
     fun reloadAll(player: Player, gun: Gun) {
+        executeReload(player, gun, true)
+    }
+
+    /**
+     * 【1発ずつリロード】
+     * 1回の実行で1発分（ammoCost）だけ消費して 1 発補充する（ショットガンや手動装テン向け）
+     */
+    fun reloadSingle(player: Player, gun: Gun) {
+        executeReload(player, gun, false)
+    }
+
+    fun executeReload(player: Player, gun: Gun, isAll: Boolean) {
         val gunItem = player.inventory.itemInMainHand
         val ammoItem = player.inventory.itemInOffHand
 
@@ -83,61 +95,47 @@ object StandardGunManager : GunManager() {
         val maxAmmo = gunMeta.gun.maxAmmo
         val missingAmmo = maxAmmo - currentAmmo
 
+        // クールタイム中なら実行しない
+        if (isAmmoOnCooldown(player, ammoItem)) return
+
         // 既に満タンならリロードしない
         if (missingAmmo <= 0) return
 
-        // 全回復に必要なコスト（1発コスト × 不足分）
-        val neededCost = reloadAmmo.ammoCost * missingAmmo
-        if (ammoItem.amount < neededCost) return
+        val newAmmo: Int
+        val cooldownDuration: Double
+        if (isAll) {
+            // 全回復に必要なコスト（1発コスト × 不足分）
+            val neededCost = reloadAmmo.ammoCost * missingAmmo
+            if (ammoItem.amount < neededCost) return
 
-        // コスト分消費
-        if (neededCost > 0) {
-            ammoItem.amount -= neededCost
+            // コスト分消費
+            if (neededCost > 0) {
+                ammoItem.amount -= neededCost
+            }
+
+            // 弾数を満タンに更新
+            newAmmo = maxAmmo
+            cooldownDuration = reloadAmmo.cooldownSeconds * neededCost
+        } else {
+            // 1発分のコストチェック
+            val ammoCost = reloadAmmo.ammoCost
+            if (ammoItem.amount < ammoCost) return
+
+            // 1発分のコストを消費
+            if (ammoCost > 0) {
+                ammoItem.amount -= ammoCost
+            }
+
+            // 弾数を 1 加算
+            newAmmo = currentAmmo + 1
+            cooldownDuration = reloadAmmo.cooldownSeconds
         }
 
-        // 弾数を満タンに更新
-        gunMeta.gun.ammo = maxAmmo
+        gunMeta.gun.ammo = newAmmo
         gunItem.itemMeta = gunMeta
 
         player.world.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_IRON, 1f, 1f)
         displayAmmo(player, gunItem)
-    }
-
-    /**
-     * 【1発ずつリロード】
-     * 1回の実行で1発分（ammoCost）だけ消費して 1 発補充する（ショットガンや手動装テン向け）
-     */
-    fun reloadSingle(player: Player, gun: Gun) {
-        val gunItem = player.inventory.itemInMainHand
-        val ammoItem = player.inventory.itemInOffHand
-
-        val ammoMeta = ammoItem.itemMeta ?: return
-        val ammoId = ammoMeta.gun.id
-
-        val reloadAmmo = gun.ammoList.firstOrNull { it.id == ammoId } ?: return
-
-        val gunMeta = gunItem.itemMeta ?: return
-        val currentAmmo = gunMeta.gun.ammo
-        val maxAmmo = gunMeta.gun.maxAmmo
-
-        // 既に満タンならリロードしない
-        if (currentAmmo >= maxAmmo) return
-
-        // 1発分のコストチェック
-        val ammoCost = reloadAmmo.ammoCost
-        if (ammoItem.amount < ammoCost) return
-
-        // 1発分のコストを消費
-        if (ammoCost > 0) {
-            ammoItem.amount -= ammoCost
-        }
-
-        // 弾数を 1 加算
-        val newAmmo = currentAmmo + 1
-        gunMeta.gun.ammo = newAmmo
-        gunItem.itemMeta = gunMeta
-
-        player.world.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_IRON, 1f, 1.3f)
-        displayAmmo(player, gunItem)
+        setAmmoCooldown(player, ammoItem, cooldownDuration)
     }
 }

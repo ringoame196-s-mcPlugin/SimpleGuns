@@ -1,11 +1,11 @@
 package com.github.ringoame196_s_mcPlugin.events
 
-import com.github.ringoame196_s_mcPlugin.Gun
-import com.github.ringoame196_s_mcPlugin.GunItem
-import com.github.ringoame196_s_mcPlugin.LeftClickable
-import com.github.ringoame196_s_mcPlugin.RightClickable
-import com.github.ringoame196_s_mcPlugin.StopUsing
-import com.github.ringoame196_s_mcPlugin.gun
+import com.github.ringoame196_s_mcPlugin.interfaces.LeftClickable
+import com.github.ringoame196_s_mcPlugin.interfaces.RightClickable
+import com.github.ringoame196_s_mcPlugin.interfaces.StopUsing
+import com.github.ringoame196_s_mcPlugin.models.Gun
+import com.github.ringoame196_s_mcPlugin.models.GunItem
+import com.github.ringoame196_s_mcPlugin.utils.gun
 import io.papermc.paper.event.player.PlayerStopUsingItemEvent
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -14,7 +14,6 @@ import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerItemHeldEvent
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
-import kotlin.collections.get
 
 class GunEvents(gunItemList: List<GunItem>) : Listener {
     private val gunItemMap: Map<String, GunItem> = gunItemList.associateBy { it.id }

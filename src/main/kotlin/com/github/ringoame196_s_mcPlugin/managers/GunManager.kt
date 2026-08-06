@@ -1,5 +1,8 @@
-package com.github.ringoame196_s_mcPlugin
+package com.github.ringoame196_s_mcPlugin.managers
 
+import com.github.ringoame196_s_mcPlugin.models.Gun
+import com.github.ringoame196_s_mcPlugin.utils.GunMeta
+import com.github.ringoame196_s_mcPlugin.utils.gun
 import org.bukkit.Particle
 import org.bukkit.Sound
 import org.bukkit.entity.LivingEntity

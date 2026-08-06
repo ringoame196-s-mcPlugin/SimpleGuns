@@ -1,5 +1,8 @@
-package com.github.ringoame196_s_mcPlugin
+package com.github.ringoame196_s_mcPlugin.managers
 
+import com.github.ringoame196_s_mcPlugin.models.Gun
+import com.github.ringoame196_s_mcPlugin.utils.GunMeta
+import com.github.ringoame196_s_mcPlugin.utils.gun
 import net.md_5.bungee.api.ChatMessageType
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.ChatColor

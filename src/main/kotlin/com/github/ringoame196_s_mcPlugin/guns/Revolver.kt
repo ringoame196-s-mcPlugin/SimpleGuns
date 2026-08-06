@@ -1,5 +1,11 @@
-package com.github.ringoame196_s_mcPlugin
+package com.github.ringoame196_s_mcPlugin.guns
 
+import com.github.ringoame196_s_mcPlugin.interfaces.LeftClickable
+import com.github.ringoame196_s_mcPlugin.interfaces.RightClickable
+import com.github.ringoame196_s_mcPlugin.managers.GunItemManager
+import com.github.ringoame196_s_mcPlugin.managers.SlotGunManager
+import com.github.ringoame196_s_mcPlugin.models.Ammo
+import com.github.ringoame196_s_mcPlugin.models.SlotGun
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.entity.Player
@@ -8,7 +14,10 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.ShapelessRecipe
 import org.bukkit.plugin.Plugin
 
-class Revolver(override val displayName: String, plugin: Plugin, override val ammoList: List<Ammo>) : LeftClickable, RightClickable, SlotGun {
+class Revolver(override val displayName: String, plugin: Plugin, override val ammoList: List<Ammo>) :
+    LeftClickable,
+    RightClickable,
+    SlotGun {
     override val id = "revolver"
     override val material = Material.IRON_AXE
     override val slot = 6

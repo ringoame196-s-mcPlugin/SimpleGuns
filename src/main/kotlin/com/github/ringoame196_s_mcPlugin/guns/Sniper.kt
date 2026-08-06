@@ -1,5 +1,11 @@
-package com.github.ringoame196_s_mcPlugin
+package com.github.ringoame196_s_mcPlugin.guns
 
+import com.github.ringoame196_s_mcPlugin.interfaces.LeftClickable
+import com.github.ringoame196_s_mcPlugin.interfaces.StopUsing
+import com.github.ringoame196_s_mcPlugin.managers.GunItemManager
+import com.github.ringoame196_s_mcPlugin.managers.SlotGunManager
+import com.github.ringoame196_s_mcPlugin.models.Ammo
+import com.github.ringoame196_s_mcPlugin.models.SlotGun
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.entity.Player

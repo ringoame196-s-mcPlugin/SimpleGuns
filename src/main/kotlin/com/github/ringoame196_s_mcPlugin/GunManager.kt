@@ -71,4 +71,12 @@ abstract class GunManager {
         val sound = Sound.ENTITY_ARROW_HIT_PLAYER
         player.playSound(player.location, sound, 1f, 1f)
     }
+
+    fun isAmmoOnCooldown(player: Player, ammoItem: ItemStack): Boolean {
+        return player.hasCooldown(ammoItem.type)
+    }
+
+    fun setAmmoCooldown(player: Player, ammoItem: ItemStack, seconds: Double) {
+        player.setCooldown(ammoItem.type, (seconds * 20).toInt())
+    }
 }

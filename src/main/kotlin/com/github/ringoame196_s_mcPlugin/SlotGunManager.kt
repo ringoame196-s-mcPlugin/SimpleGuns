@@ -90,8 +90,6 @@ object SlotGunManager : GunManager() {
      */
     override fun handleNoAmmo(player: Player) {
         val gunItem = player.inventory.itemInMainHand
-        val meta = gunItem.itemMeta ?: return
-        val gunMeta = meta.gun
 
         // 空撃ち音
         player.playSound(player.location, Sound.BLOCK_DISPENSER_FAIL, 1f, 1.8f)
@@ -127,6 +125,9 @@ object SlotGunManager : GunManager() {
         val reloadAmmo = gun.ammoList.firstOrNull { it.id == ammoId } ?: return
         if (ammoItem.amount < reloadAmmo.ammoCost) return
 
+        // クールタイム中なら実行しない
+        if (isAmmoOnCooldown(player, ammoItem)) return
+
         val gunMeta = gunItem.itemMeta?.gun ?: return
         val cylinderSlots = gunMeta.slots
 
@@ -146,5 +147,6 @@ object SlotGunManager : GunManager() {
 
         player.world.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_IRON, 1f, 1.4f)
         displayAmmo(player, gunItem)
+        setAmmoCooldown(player, ammoItem, reloadAmmo.cooldownSeconds)
     }
 }

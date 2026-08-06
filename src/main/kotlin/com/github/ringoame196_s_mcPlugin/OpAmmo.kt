@@ -12,6 +12,7 @@ class OpAmmo(name: String) : Ammo {
     override val item: ItemStack by lazy { createItem() }
     override val recipe = null
     override val ammoCost: Int = 0
+    override val cooldownSeconds = 0.0
 
     private fun createItem(): ItemStack {
         val item = GunItemManager.makeGunItem(this)

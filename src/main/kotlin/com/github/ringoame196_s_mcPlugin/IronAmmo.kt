@@ -12,6 +12,7 @@ class IronAmmo(name: String, plugin: Plugin) : Ammo {
     override val material = Material.IRON_NUGGET
     override val item = GunItemManager.makeGunItem(this)
     override val recipe: CraftingRecipe by lazy { createRecipe(plugin) }
+    override val cooldownSeconds = 0.3
 
     private fun createRecipe(plugin: Plugin): CraftingRecipe {
         val key = NamespacedKey(plugin, "${id}_shapeless")

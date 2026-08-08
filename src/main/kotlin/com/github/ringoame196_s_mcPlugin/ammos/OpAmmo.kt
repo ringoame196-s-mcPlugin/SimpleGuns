@@ -7,9 +7,8 @@ import org.bukkit.enchantments.Enchantment
 import org.bukkit.inventory.ItemStack
 import kotlin.lazy
 
-class OpAmmo(name: String) : Ammo {
+class OpAmmo : Ammo {
     override val id = "op_ammo"
-    override val displayName = name
     override val material = Material.IRON_NUGGET
     override val item: ItemStack by lazy { createItem() }
     override val recipe = null

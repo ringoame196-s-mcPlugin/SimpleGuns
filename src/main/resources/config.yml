@@ -1,0 +1,16 @@
+enable-crafting: true
+
+names:
+  pistol: "&3Pistol"
+  revolver: "&6Revolver"
+  sniper: "&7Sniper"
+  ironAmmo : "&8IronAmmo"
+  opAmmo :  "&4OpAmmon"
+
+# ja_jp
+#names:
+  #pistol: "&3シンプルガン"
+  #revolver: "&6リボルガン"
+  #sniper: "&7スナイパー"
+  #ironAmmo: "&8鉄の弾"
+  #opAmmo: "&4OpAmmon"

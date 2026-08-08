@@ -14,7 +14,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.ShapelessRecipe
 import org.bukkit.plugin.Plugin
 
-class Sniper(override val displayName: String, plugin: Plugin, override val ammoList: List<Ammo>) :
+class Sniper(plugin: Plugin, override val ammoList: List<Ammo>) :
     LeftClickable,
     SlotGun,
     StopUsing {

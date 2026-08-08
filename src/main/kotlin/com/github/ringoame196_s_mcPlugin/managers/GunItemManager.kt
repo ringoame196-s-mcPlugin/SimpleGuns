@@ -12,10 +12,15 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 
 object GunItemManager {
+    lateinit var configManager: ConfigManager
+
     fun makeGunItem(gun: GunItem): ItemStack {
         val gunItem = ItemStack(gun.material)
         val meta = gunItem.itemMeta ?: return gunItem
-        meta.setDisplayName(gun.displayName)
+
+        val displayName = configManager.getDisplayName(gun.id)
+        meta.setDisplayName(displayName)
+
         meta.gun.id = gun.id
 
         if (gun is Gun) {

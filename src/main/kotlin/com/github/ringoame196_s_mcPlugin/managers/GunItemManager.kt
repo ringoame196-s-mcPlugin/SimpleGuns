@@ -45,8 +45,7 @@ object GunItemManager {
     private fun setupHasSlotGunItem(gun: SlotGun, meta: ItemMeta) {
         meta.gun.currentSlot = 0
 
-        // 初期状態は空のシリンダー
-        meta.gun.slots = IntArray((gun).slot) { 0 }
+        meta.gun.slots = IntArray((gun).slot) { 1 }
     }
 
     private fun setZeroDamage(meta: ItemMeta) {

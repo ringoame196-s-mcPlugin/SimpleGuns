@@ -56,6 +56,8 @@ class Main : JavaPlugin() {
     private fun registerRecipes(configManager: ConfigManager, gunItemList: List<GunItem>) {
         if (configManager.isCraftingEnabled) {
             RecipeManager.registerRecipes(gunItemList)
+        } else {
+            RecipeManager.removeRecipes(gunItemList)
         }
     }
 

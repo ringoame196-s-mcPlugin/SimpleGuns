@@ -14,7 +14,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.ShapelessRecipe
 import org.bukkit.plugin.Plugin
 
-class Revolver(override val displayName: String, plugin: Plugin, override val ammoList: List<Ammo>) :
+class Revolver(plugin: Plugin, override val ammoList: List<Ammo>) :
     LeftClickable,
     RightClickable,
     SlotGun {
